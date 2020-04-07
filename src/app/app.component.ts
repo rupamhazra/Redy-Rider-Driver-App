@@ -106,7 +106,7 @@ export class AppComponent {
               this.logout_visible = true;
               this.userType = val.user_type_id
               this.profile_img = val.photo;
-              this.getMenu(this.userType);
+              this.getMenu();
             }
             else
               this.name = ''
@@ -131,74 +131,34 @@ export class AppComponent {
 
     });
   }
-  getMenu(userType) {
-    if (userType == '2') {
-      this.appPages = [
-        {
-          title: 'Home',
-          url: '/home',
-          icon: './assets/svg/home.svg',
-          chileMenu: []
-        },
-        {
-          title: 'My Account',
-          url: '/myaccount',
-          icon: './assets/svg/user1.svg',
-          chileMenu: []
-        },
-        {
-          title: 'My Notifications',
-          url: '/myaccount/myaccount-common-page/notifications',
-          icon: './assets/svg/alert.svg',
-          chileMenu: []
-        },
-        {
-          title: "Today's Rides",
-          url: '/myaccount/today-rides',
-          icon: './assets/svg/my_ride.svg',
-          chileMenu: []
-        },
-      ];
-    } else {
-      this.appPages = [
-        {
-          title: 'Home',
-          url: '/home',
-          icon: './assets/svg/home.svg',
-          chileMenu: []
-        },
-        {
-          title: 'My Account',
-          url: '/myaccount',
-          icon: './assets/svg/user1.svg',
-          chileMenu: []
-        },
-        {
-          title: 'My Wallet',
-          url: '/myaccount/wallet',
-          icon: './assets/svg/my_wallet.svg',
-          chileMenu: []
-        },
-        {
-          title: 'Refer & Earn',
-          url: '/myaccount/myaccount-common-page/refer-earn',
-          icon: './assets/svg/referal.svg',
-          chileMenu: []
-        },
-        {
-          title: 'My Notifications',
-          url: '/myaccount/myaccount-common-page/notifications',
-          icon: './assets/svg/alert.svg',
-          chileMenu: []
-        },
-        {
-          title: 'My Rides',
-          url: '/myaccount/booking-history',
-          icon: './assets/svg/my_ride.svg',
-          chileMenu: []
-        },
-      ];
-    }
+  getMenu() {
+    this.appPages = [
+      {
+        title: 'Home',
+        url: '/home',
+        icon: './assets/svg/home.svg',
+        chileMenu: []
+      },
+      {
+        title: 'My Account',
+        url: '/myaccount',
+        icon: './assets/svg/user1.svg',
+        chileMenu: []
+      },
+      {
+        title: 'My Notifications',
+        url: '/myaccount/myaccount-common-page/notifications',
+        icon: './assets/svg/alert.svg',
+        chileMenu: []
+      },
+      {
+        title: "Today's Rides",
+        url: '/myaccount/today-rides',
+        icon: './assets/svg/my_ride.svg',
+        chileMenu: []
+      },
+    ];
+
   }
   logIn() {
     //this.menuCtrl.enable(false);
