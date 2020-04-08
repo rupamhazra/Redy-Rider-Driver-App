@@ -61,7 +61,7 @@ export class HomePage implements OnInit {
   request_data: any;
   device_token: any;
   net_connection_check: boolean = false;
-  car_details_d = {};
+  car_details_d: any = {};
   clock: any = '';
   stoppage_list = [];
   start_location = '';
@@ -84,7 +84,6 @@ export class HomePage implements OnInit {
     private barcodeScanner: BarcodeScanner,
     private menuCtrl: MenuController,
   ) {
-    this.menuCtrl.enable(true);
     platform.ready().then(() => {
       if (this.platform.is("cordova"))
         this.firebaseX.getToken()
@@ -96,21 +95,13 @@ export class HomePage implements OnInit {
         this.userId = val.id;
         this.name = val.name;
         this.userType = val.user_type_id;
-        if (val.user_type_id == 2)
-          this.getTodayRides();
+        this.getTodayRides();
       }
     });
   }
-  getNotification() {
-    this.fcm.onMessageReceived().subscribe(data => {
-      if (data.wasTapped) {
-        this.router.navigate(['myaccount/notification', { pushes: JSON.stringify(data) }]);
-      } else {
-        this.toasterService.showToast('Received in foreground', 3000);
-      };
-    });
-  }
+
   ngOnInit() {
+    this.menuCtrl.enable(true);
     this.home_page_event.subscribe('check_net_connection', (data) => {
       if (data == 'connect') this.net_connection_check = false;
       if (data == 'disconnect') this.net_connection_check = true;
@@ -148,10 +139,10 @@ export class HomePage implements OnInit {
   }
   getTodayRides() {
     this.progress_bar = true;
-    let request_data = { "type": "driver", "user_id": this.userId };
+    let request_data = { "type": "first_drive", "user_id": this.userId };
     this.officePoolCarService.todayRidesService(request_data).subscribe(
       res => {
-        this.car_details_d = res.result[0];
+        this.car_details_d = res.result;
         this.storage.set('car_details', res.result);
         this.progress_bar = false;
       },

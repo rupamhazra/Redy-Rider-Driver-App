@@ -10,8 +10,8 @@ const routes: Routes = [
       //{ path: '', redirectTo: 'home' },
       { path: 'home', loadChildren: './home/home.module#HomePageModule' },
       { path: 'myaccount', loadChildren: './myaccount/myaccount.module#MyaccountPageModule' },
-      
-      
+      //{ path: 'tour-travels', loadChildren: './tour-travels/tour-travels.module#TourTravelsPageModule' },
+      //{ path: 'school-pool-car', loadChildren: './school-pool-car/school-pool-car.module#SchoolPoolCarPageModule' },
       { path: 'office-pool-car-service', loadChildren: './office-pool-car-service/office-pool-car-service.module#OfficePoolCarServicePageModule' },
       //{ path: 'bus-route-details', loadChildren: './office-pool-car-service/bus-route-details/bus-route-details.module#BusRouteDetailsPageModule' },
       //{ path: 'seat-layout-details', loadChildren: './office-pool-car-service/seat-layout-details/seat-layout-details.module#SeatLayoutDetailsPageModule' },

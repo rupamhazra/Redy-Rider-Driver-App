@@ -1,7 +1,13 @@
 <?xml version='1.0' encoding='utf-8'?>
+<<<<<<< HEAD
 <widget id="com.rskart.commerce" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Redy Rider</name>
     <description>Redy Rider</description>
+=======
+<widget id="com.redyrider.driver" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Redy Rider Driver</name>
+    <description>Redy Rider Driver</description>
+>>>>>>> 29a8260aeeaa69c1b1346737f8251bc408539a2a
     <author email="rupamhazra@gmail.com" href="">Rupam Hazra</author>
     <content src="index.html" />
     <access origin="*" />

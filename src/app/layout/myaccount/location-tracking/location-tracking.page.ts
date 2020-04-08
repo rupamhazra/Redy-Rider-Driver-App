@@ -9,7 +9,6 @@ import { Observable } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestoreCollection, AngularFirestore } from '@angular/fire/firestore';
 import { BackgroundGeolocation, BackgroundGeolocationConfig, BackgroundGeolocationEvents, BackgroundGeolocationResponse } from '@ionic-native/background-geolocation/ngx';
-import { LocalNotifications, ELocalNotificationTriggerUnit } from '@ionic-native/local-notifications/ngx';
 import { OfficePoolCarService } from '../../../core/services/office-pool-car.service';
 import { Insomnia } from '@ionic-native/insomnia/ngx';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
@@ -91,11 +90,9 @@ export class LocationTrackingPage implements OnInit {
     private plt: Platform,
     private geolocation: Geolocation,
     private storage: Storage,
-    private nativeGeocoder: NativeGeocoder,
     private backgroundGeolocation: BackgroundGeolocation,
     private afAuth: AngularFireAuth,
     private afs: AngularFirestore,
-    private localNotifications: LocalNotifications,
     private route: ActivatedRoute,
     private officePoolCarService: OfficePoolCarService,
     private insomnia: Insomnia,
@@ -107,40 +104,36 @@ export class LocationTrackingPage implements OnInit {
     private menuCtrl: MenuController,
 
   ) {
-    this.menuCtrl.enable(false);
+
     console.log('constructor')
     this.car_id = this.route.snapshot.params['car_id'];
     this.driver_id = this.route.snapshot.params['driver_id'];
-    this.storage.get('car_details').then((val) => {
-      if (val) {
-        val.forEach(element => {
-          if (element.car_id == this.car_id) {
-            console.log(element);
-            this.route_id = element.route_id;
-            this.stoppage_list = element.stoppage_list;
-            this.next_stoppage_list_array = element.stoppage_list;
-            this.next_stoppage_info = this.next_stoppage_list_array[0];
-            //console.log('next_stoppage ',this.next_stoppage_info);
-            this.start_location = element.start_location;
-            this.end_location = element.end_location;
-            this.car_type = element.car_type;
-            this.route_end_point = element.end_point_id;
-            this.route_start_point = element.start_point_id;
-            this.loadMap({ lat: parseFloat(element.start_lat), lng: parseFloat(element.start_long) },
-              { lat: parseFloat(element.end_lat), lng: parseFloat(element.end_long) });
-            element.stoppage_list_1.forEach(element => {
-              let waypoint_location;
-              waypoint_location = {
-                location: { lat: parseFloat(element.location.lat), lng: parseFloat(element.location.lng) },
-                stopover: element.stopover
-              };
-              //console.log('element:',waypoint_location);
-              this.DirectionsWaypoint.push(waypoint_location);
-            });
-            this.ride_startTime = parseFloat(element.start_end_time.start_time);
-            this.ride_endTime = parseFloat(element.start_end_time.end_time);
-          }
+    this.storage.get('car_details').then((element) => {
+      if (element) {
+        console.log(element);
+        this.route_id = element.route_id;
+        this.stoppage_list = element.stoppage_list;
+        this.next_stoppage_list_array = element.stoppage_list;
+        this.next_stoppage_info = this.next_stoppage_list_array[0];
+        //console.log('next_stoppage ',this.next_stoppage_info);
+        this.start_location = element.start_location;
+        this.end_location = element.end_location;
+        this.car_type = element.car_type;
+        this.route_end_point = element.end_point_id;
+        this.route_start_point = element.start_point_id;
+        this.loadMap({ lat: parseFloat(element.start_lat), lng: parseFloat(element.start_long) },
+          { lat: parseFloat(element.end_lat), lng: parseFloat(element.end_long) });
+        element.stoppage_list_1.forEach(element => {
+          let waypoint_location;
+          waypoint_location = {
+            location: { lat: parseFloat(element.location.lat), lng: parseFloat(element.location.lng) },
+            stopover: element.stopover
+          };
+          //console.log('element:',waypoint_location);
+          this.DirectionsWaypoint.push(waypoint_location);
         });
+        this.ride_startTime = parseFloat(element.start_end_time.start_time);
+        this.ride_endTime = parseFloat(element.start_end_time.end_time);
       }
     });
     this.storage.get('USER_INFO').then((val) => {
@@ -158,7 +151,7 @@ export class LocationTrackingPage implements OnInit {
 
   }
   ngOnInit() {
-    console.log('ngOnInit')
+    this.menuCtrl.enable(false);
     const config: BackgroundGeolocationConfig = {
       desiredAccuracy: 10,
       stationaryRadius: 20,
@@ -179,7 +172,6 @@ export class LocationTrackingPage implements OnInit {
     });
 
   }
-
   ionViewDidEnter() {
     console.log('ionViewDidEnter')
     this.plt.ready().then(() => {
@@ -263,12 +255,7 @@ export class LocationTrackingPage implements OnInit {
             title: 'you are here!',
             //animation: google.maps.Animation.DROP,
           });
-          // if (element.start == true || element.stop == true) {
-          //   infowindow.open(this.map, waypoint_location_marker);
-          // }
         });
-
-        //this.loadMap();
       } else {
         window.alert('Directions request failed due to ' + status);
       }
@@ -534,8 +521,6 @@ export class LocationTrackingPage implements OnInit {
             let car_id = this.car_type + "-" + this.car_id;
             this.afs.collection('locations').doc(car_id).delete();
             this.endJourney();
-            this.authenticationService.logout();
-            navigator['app'].exitApp();
 
 
 
@@ -586,7 +571,8 @@ export class LocationTrackingPage implements OnInit {
         this.officePoolCarService.todayRidesService(request_data).subscribe(
           res => {
             this.progress_bar = false;
-
+            this.authenticationService.logout();
+            navigator['app'].exitApp();
           },
           error => {
             //console.log("error::::" + error.error.msg);
@@ -647,7 +633,7 @@ export class LocationTrackingPage implements OnInit {
   alertResponseForLogout(response) {
     if (response) {
       this.stopTracking();
-      // this.authenticationService.logout();
+      //this.authenticationService.logout();
     }
   }
   viewRoute() {
