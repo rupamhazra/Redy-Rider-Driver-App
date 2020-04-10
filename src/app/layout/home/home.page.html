@@ -71,7 +71,7 @@
                 <p class="p_location">{{car_details_d.end_location}}</p>
               </ion-col>
             </ion-row>
-            <ion-row text-center no-margin class="button-row">
+            <!-- <ion-row text-center no-margin class="button-row">
               <ion-col style="border-right: 2px solid white;" no-padding no-margin>
                 <ion-button expand="full"  size="default" type="button"(click)="startRide(car_details_d.car_id)" [disabled]="">
                   <fa-icon [icon]="['fas','play-circle']" size="1x" class="rstar-icon"></fa-icon>&nbsp;
@@ -84,9 +84,27 @@
                   Scan QR
                 </ion-button>
               </ion-col>
-            </ion-row>
+            </ion-row> -->
           </ion-grid>
         </ion-card>
       </div>
     </div>
   </ion-content>
+  <ion-footer no-padding no-margin>
+    <ion-grid no-padding no-margin>
+      <ion-row text-center no-margin>
+        <ion-col style="border-right: 2px solid white;" no-padding no-margin>
+          <ion-button expand="full"  size="default" type="button"(click)="startRide(car_details_d.car_id)" [disabled]="">
+            <fa-icon [icon]="['fas','play-circle']" size="1x" class="rstar-icon"></fa-icon>&nbsp;
+            Start Ride
+          </ion-button>
+        </ion-col>
+        <ion-col no-margin no-padding>
+          <ion-button expand="full"  size="default" type="button" (click)="scanQrCode(car_details_d.car_id)">
+            <ion-icon ios="ios-qr-scanner" md="md-qr-scanner"></ion-icon>&nbsp;
+            Scan QR
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-footer>
