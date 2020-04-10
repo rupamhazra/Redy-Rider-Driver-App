@@ -84,13 +84,11 @@ export class HomePage implements OnInit {
     private barcodeScanner: BarcodeScanner,
     private menuCtrl: MenuController,
   ) {
-
     platform.ready().then(() => {
       if (this.platform.is("cordova"))
         this.firebaseX.getToken()
           .then(token => this.device_token = token)
           .catch(error => console.error('Error getting token', error));
-
     })
     this.storage.get('USER_INFO').then((val) => {
       if (val) {

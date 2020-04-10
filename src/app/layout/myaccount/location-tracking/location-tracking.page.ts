@@ -44,6 +44,8 @@ export class LocationTrackingPage implements OnInit {
   next_stoppage_info;
   maphideMe;
   car_icon;
+
+
   directionsService = new google.maps.DirectionsService;
   directionsDisplay = new google.maps.DirectionsRenderer({ suppressMarkers: true });
   distanceService = new google.maps.DistanceMatrixService;
@@ -519,7 +521,6 @@ export class LocationTrackingPage implements OnInit {
             let car_id = this.car_type + "-" + this.car_id;
             this.afs.collection('locations').doc(car_id).delete();
             this.endJourney();
-
 
 
 

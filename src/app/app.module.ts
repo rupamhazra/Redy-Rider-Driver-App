@@ -43,8 +43,8 @@ import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
 import { OtpVerificationPageModule } from './auth/otp-verification/otp-verification.module';
 import { ForgotPasswordModalPageModule } from './auth/forgot-password-modal/forgot-password-modal.module';
 import { PasswordModalPageModule } from './auth/password-modal/password-modal.module';
-import { TourDetailsPackagePageModule } from './layout/tour-travels/tour-details-package/tour-details-package.module';
-import { RouteStoppageModalPageModule } from './layout/office-pool-car-service/route-stoppage-modal/route-stoppage-modal.module';
+//import { TourDetailsPackagePageModule } from './layout/tour-travels/tour-details-package/tour-details-package.module';
+//import { RouteStoppageModalPageModule } from './layout/office-pool-car-service/route-stoppage-modal/route-stoppage-modal.module';
 
 
 /**
@@ -126,12 +126,12 @@ import { Insomnia } from '@ionic-native/insomnia/ngx';
     IonicModule.forRoot(),
     AppRoutingModule,
     IonicStorageModule.forRoot(),
-    TourDetailsPackagePageModule,
+    //TourDetailsPackagePageModule,
     OtpVerificationPageModule,
     FontAwesomeModule,
     ForgotPasswordModalPageModule,
     PasswordModalPageModule,
-    RouteStoppageModalPageModule,
+    //RouteStoppageModalPageModule,
     BrowserAnimationsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
