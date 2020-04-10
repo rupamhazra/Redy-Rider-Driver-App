@@ -8,8 +8,6 @@ import { MenuController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { environment } from '../environments/environment';
 import { ToasterService } from './core/services/toaster.service';
-import { Network } from '@ionic-native/network/ngx';
-import { AlertService } from './core/services/alert.service';
 import { FirebaseX } from "@ionic-native/firebase-x/ngx";
 import { Events } from '@ionic/angular';
 
@@ -44,20 +42,11 @@ export class AppComponent {
     private menuCtrl: MenuController,
     private storage: Storage,
     private toasterService: ToasterService,
-    private network: Network,
-    private alertService: AlertService,
     public app_component_event: Events,
-    //private navCtrl: NavController,
     private fcm: FirebaseX,
-    //public fcmService: FcmService,
-    //private device: Device,
   ) {
     this.arr = [];
     this.initializeApp();
-    this.getNotification();
-  }
-  getNotification() {
-
   }
   initializeApp() {
 

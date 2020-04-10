@@ -60,6 +60,7 @@ export class RouteStoppageModalPage implements OnInit {
     this.qr_image = this.navParams.get('qr_image');
     if (this.calling_page == 'bus-route-details-page') {
       this.loadingService.present();
+      console.log('22222222222222222222222222222')
       let request_data = { "type": "stoppage_details", "route_id": route_id, 'start_loc': start_point, 'end_loc': end_point };
       this.officePoolCarService.commonSearchService(request_data).subscribe(
         res => {
