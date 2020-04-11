@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-# Redy Rider
-=======
 # Redy Rider Driver App
->>>>>>> 29a8260aeeaa69c1b1346737f8251bc408539a2a
 
 All Versions::
 Node Js: 10.16.3
