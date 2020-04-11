@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Storage } from '@ionic/storage';
-import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { RouteStoppageModalPage } from '../../office-pool-car-service/route-stoppage-modal/route-stoppage-modal.page';
 import { ModalService } from '../../../core/services/modal.service';
@@ -25,7 +24,6 @@ export class MyaccountCommonPagePage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private storage: Storage,
-    private clipboard: Clipboard,
     private socialSharing: SocialSharing,
     public modalService: ModalService,
     private toasterService: ToasterService,
@@ -46,21 +44,6 @@ export class MyaccountCommonPagePage implements OnInit {
         this.notificationDetails();
       }
     });
-  }
-  copyText(input) {
-    this.clipboard.copy(input);
-    this.toasterService.showToast('Copied to clipboard', 1000, true, false);
-  }
-  referFriends() {
-    var options = {
-      message: 'Your friend has invited you to join RedyRider instant and safe carpooling with verified users.Use promo code ' + this.refer_code + ' on sign up.Click here',
-      // subject: 'this is a test subject',
-      // files:[],
-      // chooserTitle: 'RedyRider',
-      //appPackageName:'com.'
-      url: this.generate_link
-    }
-    this.socialSharing.shareWithOptions(options);
   }
   shareVia(which: string) {
     if (which == 'whatsapp') {

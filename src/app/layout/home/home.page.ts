@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { LoadingService } from '../../core/services/loading.service';
 import { ToasterService } from '../../core/services/toaster.service';
 import { Platform } from '@ionic/angular';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
@@ -15,33 +14,10 @@ import { RouteStoppageModalPage } from '../office-pool-car-service/route-stoppag
 import { ModalService } from '../../core/services/modal.service';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { MenuController } from '@ionic/angular';
-import {
-  trigger,
-  state,
-  style,
-  animate,
-  transition
-} from '@angular/animations';
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss', '../layout.page.scss'],
-  animations: [
-    trigger('fadein', [
-      state('void', style({ opacity: 0 })),
-      transition('void => *', [
-        style({ opacity: 0 }),
-        animate('900ms ease-out', style({ opacity: 1 }))
-      ])
-    ]),
-    trigger('slidelefttitle', [
-      transition('void => *', [
-        style({ opacity: 0, transform: 'translateX(150%)' }),
-        animate('900ms 300ms ease-out', style({ transform: 'translateX(0%)', opacity: 1 }))
-      ])
-    ]),
-
-  ]
 })
 export class HomePage implements OnInit {
   count: any = 0;
@@ -52,10 +28,6 @@ export class HomePage implements OnInit {
   medie_url: any = environment.imageURL
   visibleKey: boolean = false;
   result: [];
-  result_cat: [];
-  result_slide: [];
-  sos_number: string;
-  sos_email: string;
   userId: any;
   userType: string;
   request_data: any;
@@ -70,13 +42,11 @@ export class HomePage implements OnInit {
   constructor(
     private storage: Storage,
     private router: Router,
-    public loadingService: LoadingService,
     private toasterService: ToasterService,
     private device: Device,
     public platform: Platform,
     public localNotifications: LocalNotifications,
     private fcm: FirebaseX,
-    private firebaseX: FirebaseX,
     public homeService: HomeService,
     public home_page_event: Events,
     public officePoolCarService: OfficePoolCarService,
@@ -86,7 +56,7 @@ export class HomePage implements OnInit {
   ) {
     platform.ready().then(() => {
       if (this.platform.is("cordova"))
-        this.firebaseX.getToken()
+        this.fcm.getToken()
           .then(token => this.device_token = token)
           .catch(error => console.error('Error getting token', error));
     })
@@ -151,12 +121,6 @@ export class HomePage implements OnInit {
         this.toasterService.showToast(error.error.msg);
       }
     );
-  }
-  goTourPage() {
-    //this.router.navigateByUrl('/tour-travels');
-  }
-  goSchoolPullCarPage() {
-    this.router.navigateByUrl('/school-pool-car');
   }
   goToPage(name) {
     this.router.navigateByUrl('/' + name);
