@@ -653,6 +653,9 @@ export class LocationTrackingPage implements OnInit {
       lng: parseFloat(this.next_stoppage_list_array[0].lng)
     };
 
+    //console.log('current loaction stoppage : ',current_location);
+    //console.log('next loaction stoppage : ',pos_marker);
+    
     this.distanceService.getDistanceMatrix({
       origins: [current_location],
       destinations: [pos_marker],
@@ -670,22 +673,21 @@ export class LocationTrackingPage implements OnInit {
 
         // var get_distance=response.rows[0].elements;
         that.driver_distance_from_next_destination = parseFloat(response.rows[0].elements[0].distance.text);
-        alert('distance : '+ that.driver_distance_from_next_destination);
+        //alert('distance : '+ that.driver_distance_from_next_destination);
         
         if (that.driver_distance_from_next_destination <= 1) {
-          reached_stoppage = 1;
-          alert('distance'+ that.driver_distance_from_next_destination);
+          reached_stoppage = true;
+          //alert('distance'+ that.driver_distance_from_next_destination);
+
+          that.next_stoppage_list_array.shift();
+          that.next_stoppage_info = that.next_stoppage_list_array[0];
+          //alert('Next STop'+ that.next_stoppage_info);
+          //console.log('next_stoppage_info ', that.next_stoppage_info.location_name);
+          
         }
       }
     });
 
-    if (reached_stoppage == 1) {
-      //console.log('laststoppage list1',this.next_stoppage_list_array);
-      this.next_stoppage_list_array.shift();
-      this.next_stoppage_info = this.next_stoppage_list_array[0];
-      alert('Next STop'+ this.next_stoppage_info);
-      //console.log('next_stoppage_info ', this.next_stoppage_info.location_name);
-      //console.log('laststoppage list',that.next_stoppage_list_array);
-    }
+    
   }
 }
