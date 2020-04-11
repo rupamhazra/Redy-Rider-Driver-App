@@ -226,10 +226,10 @@ export class LocationTrackingPage implements OnInit {
   calculateAndDisplayRoute() {
     const that = this;
 
-    //console.log('waypoints',this.DirectionsWaypoint);
+    console.log(this.DirectionsWaypoint);
     that.directionsService.route({
-      origin: that.location_source, //origin 
-      destination: that.location_destination, //destination
+      origin: this.location_source, //origin 
+      destination: this.location_destination, //destination
       travelMode: 'DRIVING',
       waypoints: this.DirectionsWaypoint,
     }, (response, status) => {
@@ -237,7 +237,7 @@ export class LocationTrackingPage implements OnInit {
       if (status === 'OK') {
 
         that.directionsDisplay.setDirections(response);
-        that.stoppage_list.forEach(element => {
+        this.stoppage_list.forEach(element => {
           let waypoint_location_marker;
           let pos_marker = {
             lat: parseFloat(element.lat),
@@ -249,7 +249,7 @@ export class LocationTrackingPage implements OnInit {
           //console.log("Location:" ,element.location_name);
           waypoint_location_marker = new google.maps.Marker({
             position: pos_marker,
-            map: that.map,
+            map: this.map,
             icon: element.icon,
             //icon: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
             title: 'you are here!',
@@ -670,18 +670,21 @@ export class LocationTrackingPage implements OnInit {
 
         // var get_distance=response.rows[0].elements;
         that.driver_distance_from_next_destination = parseFloat(response.rows[0].elements[0].distance.text);
-        if (that.driver_distance_from_next_destination <= 0.2) {
+        //console.log('distance : ', that.driver_distance_from_next_destination);
+        
+        if (that.driver_distance_from_next_destination <= 1) {
           reached_stoppage = 1;
-
+          alert('distance'+ that.driver_distance_from_next_destination);
         }
       }
     });
 
     if (reached_stoppage == 1) {
-      //console.log('laststoppage list1',that.next_stoppage_list_array);
+      //console.log('laststoppage list1',this.next_stoppage_list_array);
       this.next_stoppage_list_array.shift();
       this.next_stoppage_info = this.next_stoppage_list_array[0];
-      console.log('next_stoppage_info ', this.next_stoppage_info.location_name);
+      alert('Next STop'+ this.next_stoppage_info);
+      //console.log('next_stoppage_info ', this.next_stoppage_info.location_name);
       //console.log('laststoppage list',that.next_stoppage_list_array);
     }
   }
