@@ -675,7 +675,7 @@ export class LocationTrackingPage implements OnInit {
         that.driver_distance_from_next_destination = parseFloat(response.rows[0].elements[0].distance.text);
         //alert('distance : '+ that.driver_distance_from_next_destination);
         
-        if (that.driver_distance_from_next_destination <= 1) {
+        if (that.driver_distance_from_next_destination <= 0.2) {
           reached_stoppage = true;
           //alert('distance'+ that.driver_distance_from_next_destination);
 
