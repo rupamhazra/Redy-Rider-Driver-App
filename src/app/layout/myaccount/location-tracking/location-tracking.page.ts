@@ -418,7 +418,7 @@ export class LocationTrackingPage implements OnInit {
           this.driver_current_lng = position.coords.longitude;
           let new_driver_location = new google.maps.LatLng(this.driver_current_lat, this.driver_current_lng);
 
-          this.get_next_stoppage_info(new_driver_location);
+          this.get_next_stoppage_info();
           this.driver_marker.setPosition(new_driver_location);
 
 
@@ -642,13 +642,21 @@ export class LocationTrackingPage implements OnInit {
   }
 
 
-  get_next_stoppage_info(current_location) {
+  get_next_stoppage_info() {
     const that = this;
     var reached_stoppage;
 
     //this.next_stoppage_list_array.forEach(element=>{
+      
+       
 
-    let pos_marker = {
+      let current_pos_marker = {
+        lat: parseFloat(this.driver_current_lat ),
+        lng: parseFloat(this.driver_current_lng)
+      };
+  
+
+    let next_stop_pos_marker = {
       lat: parseFloat(this.next_stoppage_list_array[0].lat),
       lng: parseFloat(this.next_stoppage_list_array[0].lng)
     };
@@ -657,8 +665,8 @@ export class LocationTrackingPage implements OnInit {
     //console.log('next loaction stoppage : ',pos_marker);
     
     this.distanceService.getDistanceMatrix({
-      origins: [current_location],
-      destinations: [pos_marker],
+      origins: [current_pos_marker],
+      destinations: [next_stop_pos_marker],
       travelMode: 'DRIVING',
       unitSystem: google.maps.UnitSystem.METRIC,
       avoidHighways: false,
