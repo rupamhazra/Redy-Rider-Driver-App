@@ -661,8 +661,8 @@ export class LocationTrackingPage implements OnInit {
       lng: parseFloat(this.next_stoppage_list_array[0].lng)
     };
 
-    //console.log('current loaction stoppage : ',current_location);
-    //console.log('next loaction stoppage : ',pos_marker);
+    console.log('current loaction stoppage : ',current_pos_marker);
+    console.log('next loaction stoppage : ',next_stop_pos_marker);
     
     this.distanceService.getDistanceMatrix({
       origins: [current_pos_marker],
@@ -681,7 +681,7 @@ export class LocationTrackingPage implements OnInit {
 
         // var get_distance=response.rows[0].elements;
         that.driver_distance_from_next_destination = parseFloat(response.rows[0].elements[0].distance.text);
-        //alert('distance : '+ that.driver_distance_from_next_destination);
+        console.log('distance : ', that.driver_distance_from_next_destination);
         
         if (that.driver_distance_from_next_destination <= 0.2) {
           reached_stoppage = true;
