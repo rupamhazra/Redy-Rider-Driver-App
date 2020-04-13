@@ -682,9 +682,9 @@ export class LocationTrackingPage implements OnInit {
         // var destinationList = response.destinationAddresses;
 
         // var get_distance=response.rows[0].elements;
-        //that.driver_distance_from_next_destination = parseFloat(response.rows[0].elements[0].distance.text);
-        that.driver_distance_from_next_destination = response;
-        console.log('distance : ', that.driver_distance_from_next_destination);
+        that.driver_distance_from_next_destination = parseFloat(response.rows[0].elements[0].distance.text);
+        let driver_distance_from_next_destination_response = response;
+        console.log('response_distance : ', driver_distance_from_next_destination_response);
         
         if (that.driver_distance_from_next_destination <= 0.2) {
           reached_stoppage = true;
