@@ -256,6 +256,8 @@ export class LocationTrackingPage implements OnInit {
             //animation: google.maps.Animation.DROP,
           });
         });
+
+
       } else {
         window.alert('Directions request failed due to ' + status);
       }
@@ -680,7 +682,8 @@ export class LocationTrackingPage implements OnInit {
         // var destinationList = response.destinationAddresses;
 
         // var get_distance=response.rows[0].elements;
-        that.driver_distance_from_next_destination = parseFloat(response.rows[0].elements[0].distance.text);
+        //that.driver_distance_from_next_destination = parseFloat(response.rows[0].elements[0].distance.text);
+        that.driver_distance_from_next_destination = response;
         console.log('distance : ', that.driver_distance_from_next_destination);
         
         if (that.driver_distance_from_next_destination <= 0.2) {
