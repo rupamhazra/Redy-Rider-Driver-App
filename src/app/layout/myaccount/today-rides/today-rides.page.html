@@ -6,7 +6,7 @@
       <ion-row class="">
         <ion-col>
           <p class="no_margin_p" style="font-size: 18px; padding: 6px;
-          background: #02A1EB;
+          background: #58595B;
           color: white;" text-center>
             {{item.car_type}} - {{item.car_no}}
           </p>
@@ -58,17 +58,17 @@
         </ion-col>
         <ion-col text-left style="padding: 0px;" size="11">
           <p class="p_location">{{item.start_location}}</p>
-          <p style="margin: 10px 0 10px 0;color:#02A1EB;" (click)="viewRoute(item.route_id,item.start_point_id,item.end_point_id)"> <fa-icon [icon]="['fas','route']" size="1x" class="rstar-icon"></fa-icon>&nbsp;View Route</p>
+          <p style="margin: 10px 0 10px 0;color:#02A1EB;font-size: 13px;" (click)="viewRoute(item.route_id,item.start_point_id,item.end_point_id)"> <fa-icon [icon]="['fas','route']" size="1x" class="rstar-icon"></fa-icon>&nbsp;View Route</p>
           <p class="p_location">{{item.end_location}}</p>
         </ion-col>
       </ion-row>
       <ion-row text-center no-margin class="button-row">
         <ion-col style="border-right: 2px solid white;" no-padding no-margin>
-          <ion-button expand="full"  size="default" type="button" *ngIf="item.drive_status==0"  (click)="startRide(item.car_id)" [disabled]="">
+          <ion-button expand="full" color="primary"  size="default" type="button" *ngIf="item.drive_status==0"  (click)="startRide(item.car_id)" [disabled]="">
             <fa-icon [icon]="['fas','play-circle']" size="1x" class="rstar-icon"></fa-icon>&nbsp;
             Start Ride
           </ion-button>
-          <ion-button expand="full"  size="default" type="button" *ngIf="item.drive_status==1"  (click)="startRide(item.car_id)" [disabled]="">
+          <ion-button expand="full" color="primary"  size="default" type="button" *ngIf="item.drive_status==1"  (click)="startRide(item.car_id)" [disabled]="">
             <fa-icon [icon]="['fas','play-circle']" size="1x" class="rstar-icon"></fa-icon>&nbsp;
             Resume Ride
           </ion-button>

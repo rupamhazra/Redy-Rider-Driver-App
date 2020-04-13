@@ -19,9 +19,6 @@ import { FilePath } from '@ionic-native/file-path/ngx';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
-import { OtpVerificationPageModule } from './auth/otp-verification/otp-verification.module';
-import { ForgotPasswordModalPageModule } from './auth/forgot-password-modal/forgot-password-modal.module';
-import { PasswordModalPageModule } from './auth/password-modal/password-modal.module';
 import { RouteStoppageModalPageModule } from './layout/office-pool-car-service/route-stoppage-modal/route-stoppage-modal.module';
 import { Network } from '@ionic-native/network/ngx';
 import { FirebaseX } from '@ionic-native/firebase-x/ngx';
@@ -57,10 +54,7 @@ import { Insomnia } from '@ionic-native/insomnia/ngx';
     IonicModule.forRoot(),
     AppRoutingModule,
     IonicStorageModule.forRoot(),
-    OtpVerificationPageModule,
     FontAwesomeModule,
-    ForgotPasswordModalPageModule,
-    PasswordModalPageModule,
     RouteStoppageModalPageModule,
     BrowserAnimationsModule,
     AngularFireModule.initializeApp(environment.firebase),

@@ -17,18 +17,9 @@ const routes: Routes = [
     canActivate: [AuthGuardService]
   },
   {
-    path: 'otp-verification',
-    loadChildren: './auth/otp-verification/otp-verification.module#OtpVerificationPageModule'
-  },
-  {
-    path: 'forgot-password-modal',
-    loadChildren: './auth/forgot-password-modal/forgot-password-modal.module#ForgotPasswordModalPageModule'
-  },
-  {
     path: 'forgot-password',
     loadChildren: './auth/forgot-password/forgot-password.module#ForgotPasswordPageModule'
   },
-  { path: 'password-modal', loadChildren: './auth/password-modal/password-modal.module#PasswordModalPageModule' },
   { path: 'common-page/:which-page', loadChildren: './common-page/common-page.module#CommonPagePageModule' },
 
 
