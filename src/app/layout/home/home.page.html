@@ -4,9 +4,12 @@
       <ion-img src="/assets/svg/shuttle_small.gif"></ion-img>
     </div>
     <div>
-      <ion-progress-bar type="indeterminate" class="progress_bar" *ngIf="progress_bar"></ion-progress-bar>
+      <!-- <ion-progress-bar type="indeterminate" class="progress_bar" *ngIf="progress_bar"></ion-progress-bar> -->
       <div class="inner_div">
-          <ion-grid>
+          <div class="center">
+            <mat-progress-spinner *ngIf="progress_bar" diameter=50 mode="indeterminate" color="accent"></mat-progress-spinner> 
+          </div>
+          <ion-grid *ngIf="!progress_bar">
             <ion-row>
               <ion-col>
                 <ion-text class="ion-text-center"><p class="no_margin_p">CHECK YOUR CURRENT RIDE DETAILS &nbsp;&nbsp; <span appClock></span></p></ion-text>
@@ -51,7 +54,7 @@
                 </ion-row>
               </ion-col>
             </ion-row>
-            <ion-row style="margin: 0 0 10px 0px;">
+            <ion-row style="margin: 0 0 10px 10px;">
               <ion-col>
                 <p class="no_margin_p" style="" *ngIf="car_details_d.seat_booked != '0'">
                   <fa-icon [icon]="['fas','chair']" size="1x" class="rstar-icon"></fa-icon>&nbsp;Booked Seats - <ion-text color="tertiary">{{car_details_d.booked_seats_list}}</ion-text>
