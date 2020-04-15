@@ -7,7 +7,7 @@ Cordova : 9.0.0
 angular : 7.3.9
 npm - 6.9.0
 
-# For matrial Install
+# For material Install
 
 ng add @angular/material
 
