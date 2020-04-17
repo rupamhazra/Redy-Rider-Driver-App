@@ -4,6 +4,21 @@ import { HeaderComponent } from './header/header.component';
 import { IonicModule } from '@ionic/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
+import {
+  MatFormFieldModule,
+  MatInputModule,
+  MatOptionModule,
+  MatSelectModule,
+  MatIconModule,
+  MatPaginatorModule,
+  MatSortModule,
+  MatExpansionModule,
+  MatBadgeModule,
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatProgressSpinnerModule
+} from "@angular/material";
+
 @NgModule({
   declarations: [HeaderComponent],
   imports: [
@@ -12,7 +27,19 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     FontAwesomeModule
   ],
   exports: [
-    HeaderComponent
+    HeaderComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatOptionModule,
+    MatSelectModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatExpansionModule,
+    MatBadgeModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatProgressSpinnerModule
   ]
 })
 export class ComponentsModule { }
