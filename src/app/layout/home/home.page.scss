@@ -12,4 +12,10 @@ ion-button{
     --background: #085a9a;
     margin: 0px 0 0px 0px;
 }
-.p_location{margin: 0 0 0 0px;font-size: 13px;}
+.p_location{margin: 0 0 0 0px;
+    font-size: 13px;
+    width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;}

@@ -8,8 +8,33 @@ ion-button{
 .eb_left{
     margin-right: 5px;
 }
-.p_location{
-    // text-align: left;
-    margin: 0 0 0 0px;
+.p_location{margin: 0 0 0 0px;
     font-size: 13px;
+    width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;
+}
+.margin-top{
+    margin-top: 10px;
+}
+.margin-bottom-10{
+    margin-bottom: 10px;
+}
+::ng-deep .mat-expansion-panel-header > .mat-expansion-indicator {
+    margin: 0px 0 0px 0 !important;
+}
+::ng-deep .mat-expansion-panel-header-car {
+    box-shadow: none !important;
+}
+::ng-deep .mat-expansion-panel-header-car > .mat-expansion-panel-header{
+    padding: 0 24px 0 0;
+    border-radius: 0px;
+}
+.col-pad{
+    padding: 13px 0px 2px 15px;
+}
+::ng-deep .mat-expansion-panel-content > .mat-expansion-panel-body{
+    padding: 0 12px 16px !important;
 }
