@@ -40,8 +40,16 @@
     </ion-card-header>
   
     <ion-card-content>
-      <ion-badge color="primary" *ngIf="next_stoppage_info" >{{next_stoppage_info.total_passenger}}</ion-badge>
-       Boardings
+      <div *ngIf="next_stoppage_info">
+        <ion-badge color="primary" >{{next_stoppage_info.total_passenger}}</ion-badge>
+        Boardings
+      </div>
+
+      <div *ngIf="!next_stoppage_info">
+        Journey Ends, Please stop the ride!
+        
+      </div>
+      
     </ion-card-content>
   </ion-card>
   
