@@ -21,7 +21,7 @@
                 <p class="no_margin_p" style="font-size: 20px;">
                   {{car_details_d.car_type}} - <ion-text color="success">{{car_details_d.car_no}}</ion-text>
                 </p>
-                <ion-row style="margin: 5px 0 5px 0;font-size: 14px;" no-padding no-margin>
+                <ion-row style="margin: 15px 0 5px 0;font-size: 14px;" no-padding no-margin>
                   <ion-col>
                     <p style="margin: 0px 0 0px 0;">
                       <fa-icon [icon]="['fas','clock']" size="1x" class="rstar-icon"></fa-icon>
@@ -63,13 +63,13 @@
             </ion-row>
             <ion-row style="margin-left: 10px;">
               <ion-col text-center style="padding: 0px;" size="1">
-                <ion-img src="./assets/svg/logo.svg" alt="redy rider" style="width: 17px;"></ion-img>
-                <ion-img src="./assets/svg/dot.svg" alt="." style="width: 3px;margin: 3px 0 3px 7px;" ></ion-img>
-                <ion-img src="./assets/svg/logo.svg" alt="redy rider" style="width: 17px;"></ion-img>
+                <ion-img src="./assets/svg/logo.svg" alt="redy rider" style="width: 14px;"></ion-img>
+                <ion-img src="./assets/svg/dot.svg" alt="." style="width: 3px;margin: 5px 0 5px 5px;" ></ion-img>
+                <ion-img src="./assets/svg/logo.svg" alt="redy rider" style="width: 14px;"></ion-img>
               </ion-col>
               <ion-col text-left style="padding: 0px;" size="11">
                 <p class="p_location">{{car_details_d.start_location}}</p>
-                <p style="margin: 10px 0 10px 0;color:#02A1EB;font-size: 13px;" (click)="viewRoute(car_details_d.route_id,car_details_d.start_point_id,car_details_d.end_point_id,car_details_d.route_timing_id)"><fa-icon [icon]="['fas','route']" size="1x" class="rstar-icon"></fa-icon>&nbsp;View Route</p>
+                <p style="margin: 10px 0 15px 0;color:#02A1EB;font-size: 13px;" (click)="viewRoute(car_details_d.route_id,car_details_d.start_point_id,car_details_d.end_point_id,car_details_d.route_timing_id)"><fa-icon [icon]="['fas','route']" size="1x" class="rstar-icon"></fa-icon>&nbsp;View Route</p>
                 <p class="p_location">{{car_details_d.end_location}}</p>
               </ion-col>
             </ion-row>

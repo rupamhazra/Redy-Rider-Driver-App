@@ -126,9 +126,8 @@ export class HomePage implements OnInit {
   goToPage(name) {
     this.router.navigateByUrl('/' + name);
   }
-  viewRoute(route_id: string, start_point, end_point, route_timing_id ) {
-    //console.log(this.car_details_d.route_timing_id);
-    let data = { 'route_id': route_id, 'from_which_page': 'bus-route-details-page', 'start_point': start_point, 'end_point': end_point , 'route_timing_id': route_timing_id}
+  viewRoute(route_id: string, start_point, end_point, route_timing_id) {
+    let data = { 'route_id': route_id, 'from_which_page': 'bus-route-details-page', 'start_point': start_point, 'end_point': end_point, 'route_timing_id': route_timing_id }
     this.modalService.openModal(RouteStoppageModalPage, data, 'stoppage_modal_css');
   }
   startRide(car_id) {
