@@ -40,8 +40,9 @@ export class LocationTrackingPage implements OnInit {
   lng;
   last_driver_postion;
   driver_distance_from_next_destination;
-  next_stoppage_list_array;
+  next_stoppage_list_array=[];
   next_stoppage_info;
+  previous_stoppage_list_array= [];
   maphideMe;
   car_icon;
 
@@ -647,6 +648,7 @@ export class LocationTrackingPage implements OnInit {
   get_next_stoppage_info() {
     const that = this;
     var reached_stoppage;
+    var distance_checker;
 
     //this.next_stoppage_list_array.forEach(element=>{
       
@@ -685,11 +687,21 @@ export class LocationTrackingPage implements OnInit {
         that.driver_distance_from_next_destination = parseFloat(response.rows[0].elements[0].distance.text);
         let driver_distance_from_next_destination_response = response;
         console.log('response_distance : ', driver_distance_from_next_destination_response);
+
+        let driver_distance_from_next_stoppage=response.rows[0].elements[0].distance.text.split(" ");
+
+        console.log('distance : ', driver_distance_from_next_stoppage);
+
+        if(driver_distance_from_next_stoppage[1]=='km'){
+          distance_checker=0.1;
+        }else{
+          distance_checker=100;
+        }
         
-        if (that.driver_distance_from_next_destination <= 0.2) {
+        if (that.driver_distance_from_next_destination <= distance_checker) {
           reached_stoppage = true;
           //alert('distance'+ that.driver_distance_from_next_destination);
-
+          that.previous_stoppage_list_array.push(that.next_stoppage_list_array[0]);
           that.next_stoppage_list_array.shift();
           that.next_stoppage_info = that.next_stoppage_list_array[0];
           //alert('Next STop'+ that.next_stoppage_info);

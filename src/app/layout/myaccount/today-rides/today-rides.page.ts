@@ -48,7 +48,7 @@ export class TodayRidesPage implements OnInit {
       res => {
         //console.log('res', res)
         this.result = res.result;
-        console.log(this.result);
+        //console.log(this.result);
         //this.result.shift();
         this.progress_bar = false;
       },
@@ -62,8 +62,8 @@ export class TodayRidesPage implements OnInit {
   startRide(car_id) {
     this.router.navigateByUrl('myaccount/location-tracking/' + car_id + '/' + this.userId);
   }
-  viewRoute(route_id: string, start_point, end_point) {
-    let data = { 'route_id': route_id, 'from_which_page': 'bus-route-details-page', 'start_point': start_point, 'end_point': end_point }
+  viewRoute(route_id: string, start_point, end_point, route_timing_id) {
+    let data = { 'route_id': route_id, 'from_which_page': 'bus-route-details-page', 'start_point': start_point, 'end_point': end_point, 'route_timing_id': route_timing_id }
     this.modalService.openModal(RouteStoppageModalPage, data, 'stoppage_modal_css');
   }
 
