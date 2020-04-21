@@ -182,7 +182,7 @@ export class LocationTrackingPage implements OnInit {
 
   }
   ngOnInit() {
-    this.menuCtrl.enable(false);
+
     const config: BackgroundGeolocationConfig = {
       desiredAccuracy: 10,
       stationaryRadius: 20,
@@ -203,7 +203,8 @@ export class LocationTrackingPage implements OnInit {
     });
 
   }
-  ionViewDidEnter() {
+  ionDidOpen() {
+    this.menuCtrl.enable(false);
     console.log('ionViewDidEnter')
     this.plt.ready().then(() => {
       //this.loadHistoricRoutes();
