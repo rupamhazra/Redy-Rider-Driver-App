@@ -24,6 +24,8 @@ declare var google;
 import { map } from 'rxjs/operators';
 import { element } from '@angular/core/src/render3';
 declare var window;
+import { MatStepper } from '@angular/material/stepper';
+
 @Component({
   selector: 'app-location-tracking',
   templateUrl: './location-tracking.page.html',
@@ -31,6 +33,7 @@ declare var window;
 })
 export class LocationTrackingPage implements OnInit {
   @ViewChild('map') mapElement: ElementRef;
+  @ViewChild('stepper') private myStepper: MatStepper;
   progress_bar: boolean = false;
   driver_current_lat;
   driver_current_lng;
@@ -40,9 +43,9 @@ export class LocationTrackingPage implements OnInit {
   lng;
   last_driver_postion;
   driver_distance_from_next_destination;
-  next_stoppage_list_array=[];
+  next_stoppage_list_array = [];
   next_stoppage_info;
-  previous_stoppage_list_array= [];
+  previous_stoppage_list_array = [];
   maphideMe;
   car_icon;
   ride_end;
@@ -79,7 +82,7 @@ export class LocationTrackingPage implements OnInit {
     useLocale: true,
     maxResults: 5
   };
-  stoppage_list = [];
+  stoppage_list: any;
   start_location = '';
   end_location = '';
   car_type = '';
@@ -87,6 +90,8 @@ export class LocationTrackingPage implements OnInit {
   driver_id = '';
   route_start_point;
   route_end_point;
+  route_timing_id;
+
   constructor(
     public navCtrl: NavController,
     private plt: Platform,
@@ -110,35 +115,10 @@ export class LocationTrackingPage implements OnInit {
     console.log('constructor')
     this.car_id = this.route.snapshot.params['car_id'];
     this.driver_id = this.route.snapshot.params['driver_id'];
-    this.ride_end=false;
-    this.storage.get('car_details').then((element) => {
-      if (element) {
-        console.log(element);
-        this.route_id = element.route_id;
-        this.stoppage_list = element.stoppage_list;
-        this.next_stoppage_list_array = element.stoppage_list;
-        this.next_stoppage_info = this.next_stoppage_list_array[0];
-        //console.log('next_stoppage ',this.next_stoppage_info);
-        this.start_location = element.start_location;
-        this.end_location = element.end_location;
-        this.car_type = element.car_type;
-        this.route_end_point = element.end_point_id;
-        this.route_start_point = element.start_point_id;
-        this.loadMap({ lat: parseFloat(element.start_lat), lng: parseFloat(element.start_long) },
-          { lat: parseFloat(element.end_lat), lng: parseFloat(element.end_long) });
-        element.stoppage_list_1.forEach(element => {
-          let waypoint_location;
-          waypoint_location = {
-            location: { lat: parseFloat(element.location.lat), lng: parseFloat(element.location.lng) },
-            stopover: element.stopover
-          };
-          //console.log('element:',waypoint_location);
-          this.DirectionsWaypoint.push(waypoint_location);
-        });
-        this.ride_startTime = parseFloat(element.start_end_time.start_time);
-        this.ride_endTime = parseFloat(element.start_end_time.end_time);
-      }
-    });
+    this.route_timing_id = this.route.snapshot.params['route_timing_id'];
+    this.route_id = this.route.snapshot.params['route_master_id'];
+    this.ride_end = false;
+    this.getRideCarDetails();
     this.storage.get('USER_INFO').then((val) => {
       if (val) {
         //this.refer_code = val.user_account_no+'-'+val.name;
@@ -151,6 +131,56 @@ export class LocationTrackingPage implements OnInit {
         this.isTracking = true;
       }
     });
+
+  }
+  getRideCarDetails() {
+    this.progress_bar = true;
+    let request_data = {
+      'type': 'my_car',
+      'user_id': this.driver_id,
+      'route_master_id': this.route_id,
+      'route_timing_id': this.route_timing_id
+    }
+    this.officePoolCarService.todayRidesService(request_data).subscribe(
+      element => {
+
+        console.log(element);
+        this.progress_bar = false;
+        this.route_id = element.result.route_id;
+
+        this.stoppage_list = element.result.stoppage_list;
+
+        this.stoppage_list.forEach(stops => {
+        this.next_stoppage_list_array.push(stops) ;
+        });
+
+        this.next_stoppage_info = this.next_stoppage_list_array[0];
+        this.start_location = element.result.start_location;
+        this.end_location = element.result.end_location;
+        this.car_type = element.result.car_type;
+        this.route_end_point = element.result.end_point_id;
+        this.route_start_point = element.result.start_point_id;
+        this.loadMap({ lat: parseFloat(element.result.start_lat), lng: parseFloat(element.result.start_long) },
+          { lat: parseFloat(element.result.end_lat), lng: parseFloat(element.result.end_long) });
+        element.result.stoppage_list_1.forEach(element => {
+          let waypoint_location;
+          waypoint_location = {
+            location: { lat: parseFloat(element.location.lat), lng: parseFloat(element.location.lng) },
+            stopover: element.stopover
+          };
+          //console.log('element:',waypoint_location);
+          this.DirectionsWaypoint.push(waypoint_location);
+        });
+        this.ride_startTime = parseFloat(element.result.start_end_time.start_time);
+        this.ride_endTime = parseFloat(element.result.start_end_time.end_time);
+      },
+      error => {
+        //console.log("error::::" + error.error.msg);
+        this.progress_bar = false;
+        //this.toasterService.showToast(error.error.msg, 2000)
+      }
+    );
+
 
   }
   ngOnInit() {
@@ -302,7 +332,7 @@ export class LocationTrackingPage implements OnInit {
       })
     });
     if (this.already_exist_firebase == true) {
-      console.log('sdfffffdsfdfsdfd')
+      console.log('firebase entry exits')
       this.tracking_location();
     } else {
       this.create_tracking_inFirebase();
@@ -648,28 +678,29 @@ export class LocationTrackingPage implements OnInit {
 
 
   get_next_stoppage_info() {
+    this.goForward();
     const that = this;
     var reached_stoppage;
     var distance_checker;
 
     //this.next_stoppage_list_array.forEach(element=>{
-      
-       
 
-      let current_pos_marker = {
-        lat: parseFloat(this.driver_current_lat ),
-        lng: parseFloat(this.driver_current_lng)
-      };
-  
+
+
+    let current_pos_marker = {
+      lat: parseFloat(this.driver_current_lat),
+      lng: parseFloat(this.driver_current_lng)
+    };
+
 
     let next_stop_pos_marker = {
       lat: parseFloat(this.next_stoppage_list_array[0].lat),
       lng: parseFloat(this.next_stoppage_list_array[0].lng)
     };
 
-    console.log('current loaction stoppage : ',current_pos_marker);
-    console.log('next loaction stoppage : ',next_stop_pos_marker);
-    
+    console.log('current loaction stoppage : ', current_pos_marker);
+    console.log('next loaction stoppage : ', next_stop_pos_marker);
+
     this.distanceService.getDistanceMatrix({
       origins: [current_pos_marker],
       destinations: [next_stop_pos_marker],
@@ -690,37 +721,40 @@ export class LocationTrackingPage implements OnInit {
         let driver_distance_from_next_destination_response = response;
         console.log('response_distance : ', driver_distance_from_next_destination_response);
 
-        let driver_distance_from_next_stoppage=response.rows[0].elements[0].distance.text.split(" ");
+        let driver_distance_from_next_stoppage = response.rows[0].elements[0].distance.text.split(" ");
 
         console.log('distance : ', driver_distance_from_next_stoppage);
 
-        if(driver_distance_from_next_stoppage[1]=='km'){
-          distance_checker=0.1;
-        }else{
-          distance_checker=100;
+        if (driver_distance_from_next_stoppage[1] == 'km') {
+          distance_checker = 0.1;
+        } else {
+          distance_checker = 100;
         }
-        
+
         if (that.driver_distance_from_next_destination <= distance_checker) {
           reached_stoppage = true;
-          if(that.next_stoppage_list_array[0].stop==true){
+          if (that.next_stoppage_list_array[0].stop == true) {
             alert('Route Journey completed!');
-            that.ride_end=true;
-            that.next_stoppage_info=false;
+            that.ride_end = true;
+            that.next_stoppage_info = false;
             //that.next_stoppage_info.location_name="Route Journey completed";
           }
-            that.previous_stoppage_list_array.push(that.next_stoppage_list_array[0]);
-            that.next_stoppage_list_array.shift();
-            that.next_stoppage_info = that.next_stoppage_list_array[0];
-          
+          that.previous_stoppage_list_array.push(that.next_stoppage_list_array[0]);
+          that.next_stoppage_list_array.shift();
+          that.next_stoppage_info = that.next_stoppage_list_array[0];
+          //console.log('that.stoppage_list ', that.stoppage_list)
           //alert('distance'+ that.driver_distance_from_next_destination);
-          
+
           //alert('Next STop'+ that.next_stoppage_info);
-          //console.log('next_stoppage_info ', that.next_stoppage_info.location_name);
-          
+          //console.log('that.next_stoppage_list_array ',  that.next_stoppage_list_array);
+
         }
       }
     });
 
-    
+
+  }
+  goForward() {
+    //this.myStepper.next();
   }
 }

@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'location-tracking/:car_id/:driver_id',
+    path: 'location-tracking/:car_id/:driver_id/:route_timing_id/:route_master_id',
     loadChildren: './location-tracking/location-tracking.module#LocationTrackingPageModule'
   },
   { path: 'today-rides', loadChildren: './today-rides/today-rides.module#TodayRidesPageModule' },

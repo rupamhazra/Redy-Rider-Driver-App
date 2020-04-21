@@ -130,8 +130,8 @@ export class HomePage implements OnInit {
     let data = { 'route_id': route_id, 'from_which_page': 'bus-route-details-page', 'start_point': start_point, 'end_point': end_point, 'route_timing_id': route_timing_id }
     this.modalService.openModal(RouteStoppageModalPage, data, 'stoppage_modal_css');
   }
-  startRide(car_id) {
-    this.router.navigateByUrl('myaccount/location-tracking/' + car_id + '/' + this.userId);
+  startRide(car_id, route_timing_id, route_master_id) {
+    this.router.navigateByUrl('myaccount/location-tracking/' + car_id + '/' + this.userId + '/' + route_timing_id + '/' + route_master_id);
   }
   scanQrCode(car_id = '') {
     this.barcodeScanner.scan().then(barcodeData => {
