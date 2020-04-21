@@ -24,6 +24,7 @@ declare var google;
 import { map } from 'rxjs/operators';
 import { element } from '@angular/core/src/render3';
 declare var window;
+
 @Component({
   selector: 'app-location-tracking',
   templateUrl: './location-tracking.page.html',
@@ -40,9 +41,9 @@ export class LocationTrackingPage implements OnInit {
   lng;
   last_driver_postion;
   driver_distance_from_next_destination;
-  next_stoppage_list_array=[];
+  next_stoppage_list_array = [];
   next_stoppage_info;
-  previous_stoppage_list_array= [];
+  previous_stoppage_list_array = [];
   maphideMe;
   car_icon;
 
@@ -86,6 +87,8 @@ export class LocationTrackingPage implements OnInit {
   driver_id = '';
   route_start_point;
   route_end_point;
+  route_timing_id;
+
   constructor(
     public navCtrl: NavController,
     private plt: Platform,
@@ -109,6 +112,7 @@ export class LocationTrackingPage implements OnInit {
     console.log('constructor')
     this.car_id = this.route.snapshot.params['car_id'];
     this.driver_id = this.route.snapshot.params['driver_id'];
+    this.route_timing_id = this.route.snapshot.params['route_timing_id'];
     this.storage.get('car_details').then((element) => {
       if (element) {
         console.log(element);
@@ -651,23 +655,23 @@ export class LocationTrackingPage implements OnInit {
     var distance_checker;
 
     //this.next_stoppage_list_array.forEach(element=>{
-      
-       
 
-      let current_pos_marker = {
-        lat: parseFloat(this.driver_current_lat ),
-        lng: parseFloat(this.driver_current_lng)
-      };
-  
+
+
+    let current_pos_marker = {
+      lat: parseFloat(this.driver_current_lat),
+      lng: parseFloat(this.driver_current_lng)
+    };
+
 
     let next_stop_pos_marker = {
       lat: parseFloat(this.next_stoppage_list_array[0].lat),
       lng: parseFloat(this.next_stoppage_list_array[0].lng)
     };
 
-    console.log('current loaction stoppage : ',current_pos_marker);
-    console.log('next loaction stoppage : ',next_stop_pos_marker);
-    
+    console.log('current loaction stoppage : ', current_pos_marker);
+    console.log('next loaction stoppage : ', next_stop_pos_marker);
+
     this.distanceService.getDistanceMatrix({
       origins: [current_pos_marker],
       destinations: [next_stop_pos_marker],
@@ -688,16 +692,16 @@ export class LocationTrackingPage implements OnInit {
         let driver_distance_from_next_destination_response = response;
         console.log('response_distance : ', driver_distance_from_next_destination_response);
 
-        let driver_distance_from_next_stoppage=response.rows[0].elements[0].distance.text.split(" ");
+        let driver_distance_from_next_stoppage = response.rows[0].elements[0].distance.text.split(" ");
 
         console.log('distance : ', driver_distance_from_next_stoppage);
 
-        if(driver_distance_from_next_stoppage[1]=='km'){
-          distance_checker=0.1;
-        }else{
-          distance_checker=100;
+        if (driver_distance_from_next_stoppage[1] == 'km') {
+          distance_checker = 0.1;
+        } else {
+          distance_checker = 100;
         }
-        
+
         if (that.driver_distance_from_next_destination <= distance_checker) {
           reached_stoppage = true;
           //alert('distance'+ that.driver_distance_from_next_destination);
@@ -706,11 +710,11 @@ export class LocationTrackingPage implements OnInit {
           that.next_stoppage_info = that.next_stoppage_list_array[0];
           //alert('Next STop'+ that.next_stoppage_info);
           //console.log('next_stoppage_info ', that.next_stoppage_info.location_name);
-          
+
         }
       }
     });
 
-    
+
   }
 }

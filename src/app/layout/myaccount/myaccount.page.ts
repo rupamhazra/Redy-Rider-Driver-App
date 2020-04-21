@@ -107,6 +107,7 @@ export class MyaccountPage implements OnInit {
       this.officePoolCarService.personalService(request_data).subscribe(
         res => {
           this.user_details = res.result;
+          this.profile_img = res.result.photo;
           this.progress_bar = false;
         },
         error => {

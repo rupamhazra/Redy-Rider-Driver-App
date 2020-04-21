@@ -16,7 +16,8 @@ import {
   MatBadgeModule,
   MatDatepickerModule,
   MatNativeDateModule,
-  MatProgressSpinnerModule
+  MatProgressSpinnerModule,
+  MatStepperModule
 } from "@angular/material";
 
 @NgModule({
@@ -39,7 +40,8 @@ import {
     MatBadgeModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatStepperModule
   ]
 })
 export class ComponentsModule { }

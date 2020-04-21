@@ -40,18 +40,26 @@
     </ion-card-header>
   
     <ion-card-content>
-      <ion-badge color="primary" *ngIf="next_stoppage_info" >{{next_stoppage_info.total_passenger}}</ion-badge>
-       Boardings
+       Boardings <mat-icon matBadge="{{next_stoppage_info.total_passenger}}" matBadgeColor="primary" *ngIf="next_stoppage_info"></mat-icon>
     </ion-card-content>
   </ion-card>
   
   
 
   <ion-card>
+
+
+
+
+    
     <ion-item class="ion-activated" *ngFor="let stoppage of stoppage_list; let i = index; let lst = last;">
       <ion-icon name="wifi" slot="start"></ion-icon>
       
-      <ion-label><ion-badge color="primary">{{stoppage.total_passenger}} Boardings</ion-badge> {{stoppage.location_name}}</ion-label>
+      <ion-label>
+        <ion-badge color="success" *ngIf="stoppage.total_passenger != 0">{{stoppage.total_passenger}} Boardings</ion-badge>
+        <ion-badge color="danger" *ngIf="stoppage.total_passenger == 0">{{stoppage.total_passenger}} Boardings</ion-badge>
+        {{stoppage.location_name}}
+      </ion-label>
     </ion-item>
   
   </ion-card>
@@ -66,45 +74,7 @@
       
       <ion-label><ion-badge color="primary">{{stoppage.total_passenger}} Boardings</ion-badge> {{stoppage.location_name}}</ion-label>
     </ion-item>
-  
   </ion-card>
-  
- 
-  <!-- <ion-button type="button"  size="default" color="tertiary" (click)="startTracking()">
-    <ion-icon name="locate"></ion-icon>
-    Start
-  </ion-button>
-  <ion-button type="button"  size="default" color="tertiary" (click)="stopTracking()">
-      <ion-icon name="hand"></ion-icon>
-      Stop
-  </ion-button>
-  <ion-button type="button"  size="default" color="tertiary" (click)="GetLocations()">
-    <ion-icon name="hand"></ion-icon>
-    GetLocations
-</ion-button> -->
-
-  <!-- <ion-list-header><ion-label>Previous Tracks History</ion-label></ion-list-header>
-  <ion-grid>
-    
-      <ion-row *ngFor="let pos of locations | async">
-
-        <ion-col>
-          <p>Lat: {{ pos.lat }}</p>
-          <p>Lng: {{ pos.lng }}</p>
-          <p>
-            {{ pos.timestamp | date:'short' }}
-          </p>
-          <p>
-            {{ pos.address}}
-          </p>
-        <button ion-button clear item-end (click)="showHistoryRoute(locations)">View Route</button>
-      </ion-col>
-      </ion-row>
-
-     
-
-    
-  </ion-grid> -->
 </ion-content>
 <ion-footer class="footer-bus-route-details">
   <ion-grid no-margin no-paading>
