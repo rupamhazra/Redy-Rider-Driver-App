@@ -59,8 +59,8 @@ export class TodayRidesPage implements OnInit {
       }
     );
   }
-  startRide(car_id, route_timing_id) {
-    this.router.navigateByUrl('myaccount/location-tracking/' + car_id + '/' + this.userId + '/' + route_timing_id);
+  startRide(car_id, route_timing_id, route_master_id) {
+    this.router.navigateByUrl('myaccount/location-tracking/' + car_id + '/' + this.userId + '/' + route_timing_id + '/' + route_master_id);
   }
   viewRoute(route_id: string, start_point, end_point, route_timing_id) {
     let data = { 'route_id': route_id, 'from_which_page': 'bus-route-details-page', 'start_point': start_point, 'end_point': end_point, 'route_timing_id': route_timing_id }
