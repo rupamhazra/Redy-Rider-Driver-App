@@ -56,7 +56,7 @@
   
 
   <ion-card>
-    <ion-item class="ion-activated" *ngFor="let stoppage of stoppage_list; let i = index; let lst = last;">
+    <ion-item class="ion-activated" *ngFor="let stoppage of next_stoppage_list_array; let i = index; let lst = last;">
       <ion-icon name="wifi" slot="start"></ion-icon>
       
       <ion-label><ion-badge color="primary">{{stoppage.total_passenger}} Boardings</ion-badge> {{stoppage.location_name}}</ion-label>
