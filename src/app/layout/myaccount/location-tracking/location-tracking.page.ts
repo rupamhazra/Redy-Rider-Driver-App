@@ -46,6 +46,7 @@ export class LocationTrackingPage implements OnInit {
   previous_stoppage_list_array = [];
   maphideMe;
   car_icon;
+  ride_end;
 
 
   directionsService = new google.maps.DirectionsService;
@@ -113,6 +114,7 @@ export class LocationTrackingPage implements OnInit {
     this.car_id = this.route.snapshot.params['car_id'];
     this.driver_id = this.route.snapshot.params['driver_id'];
     this.route_timing_id = this.route.snapshot.params['route_timing_id'];
+    this.ride_end = false;
     this.storage.get('car_details').then((element) => {
       if (element) {
         console.log(element);
@@ -704,10 +706,18 @@ export class LocationTrackingPage implements OnInit {
 
         if (that.driver_distance_from_next_destination <= distance_checker) {
           reached_stoppage = true;
-          //alert('distance'+ that.driver_distance_from_next_destination);
+          if (that.next_stoppage_list_array[0].stop == true) {
+            alert('Route Journey completed!');
+            that.ride_end = true;
+            that.next_stoppage_info = false;
+            //that.next_stoppage_info.location_name="Route Journey completed";
+          }
           that.previous_stoppage_list_array.push(that.next_stoppage_list_array[0]);
           that.next_stoppage_list_array.shift();
           that.next_stoppage_info = that.next_stoppage_list_array[0];
+
+          //alert('distance'+ that.driver_distance_from_next_destination);
+
           //alert('Next STop'+ that.next_stoppage_info);
           //console.log('next_stoppage_info ', that.next_stoppage_info.location_name);
 
