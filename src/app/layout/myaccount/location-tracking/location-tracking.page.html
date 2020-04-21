@@ -43,7 +43,7 @@
       
        
       <div *ngIf="next_stoppage_info">
-        Boardings <mat-icon matBadge="{{next_stoppage_info.total_passenger}}" matBadgeColor="primary" *ngIf="next_stoppage_info"></mat-icon>
+        Boardings <mat-icon matBadge="{{next_stoppage_info.total_passenger}}" matBadgeColor="primary" *ngIf="next_stoppage_info" class="boarding-badge"></mat-icon>
       </div>
 
       <div *ngIf="!next_stoppage_info">
@@ -55,14 +55,28 @@
   </ion-card>
   
   
-    
-  <!-- <mat-vertical-stepper [linear]="false" #stepper>
+  <mat-vertical-stepper [linear]="false" #stepper>
     <mat-step [stepControl]="stoppage" *ngFor="let stoppage of stoppage_list; let i = index; let lst = last;">
       <ng-template matStepLabel>{{stoppage.location_name}}</ng-template>
+      <ion-list>
+        <h6 style="font-size: 14px;">Passenger List ({{stoppage.passenger_listed.length}})</h6>
+        <mat-divider></mat-divider>
+        <ion-item *ngFor="let passenger of stoppage.passenger_listed">
+          <ion-avatar slot="start">
+            <img src="{{passenger.pro_img}}" />
+          </ion-avatar>
+          <ion-label>
+            <h4>{{passenger.name}}</h4>
+            <p> {{passenger.mobile}} </p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
     </mat-step>
-  </mat-vertical-stepper> -->
+  </mat-vertical-stepper>
   
-  <ion-card>
+  
+  
+  <!-- <ion-card>
 
 
     
@@ -78,7 +92,7 @@
       </ion-label>
     </ion-item>
   
-  </ion-card>
+  </ion-card> -->
 
   <ion-card>
     <ion-card-header>

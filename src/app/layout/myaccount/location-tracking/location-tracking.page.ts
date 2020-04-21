@@ -147,11 +147,9 @@ export class LocationTrackingPage implements OnInit {
         console.log(element);
         this.progress_bar = false;
         this.route_id = element.result.route_id;
-
         this.stoppage_list = element.result.stoppage_list;
-
         this.stoppage_list.forEach(stops => {
-        this.next_stoppage_list_array.push(stops) ;
+          this.next_stoppage_list_array.push(stops);
         });
 
         this.next_stoppage_info = this.next_stoppage_list_array[0];
@@ -678,7 +676,7 @@ export class LocationTrackingPage implements OnInit {
 
 
   get_next_stoppage_info() {
-    this.goForward();
+
     const that = this;
     var reached_stoppage;
     var distance_checker;
@@ -742,6 +740,7 @@ export class LocationTrackingPage implements OnInit {
           that.previous_stoppage_list_array.push(that.next_stoppage_list_array[0]);
           that.next_stoppage_list_array.shift();
           that.next_stoppage_info = that.next_stoppage_list_array[0];
+          that.myStepper.next();
           //console.log('that.stoppage_list ', that.stoppage_list)
           //alert('distance'+ that.driver_distance_from_next_destination);
 
@@ -755,6 +754,6 @@ export class LocationTrackingPage implements OnInit {
 
   }
   goForward() {
-    //this.myStepper.next();
+    this.myStepper.next();
   }
 }

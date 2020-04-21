@@ -57,10 +57,25 @@ ion-header {
     transform: scale( .75 );
   }
 }
-.mat-icon{
+.boarding-badge{
     animation: heartbeat 1s infinite;
 }
 ion-badge{
     top: 4px;
     position: relative;
+}
+.mat-stepper-horizontal, .mat-stepper-vertical{
+  background: transparent !important;
+}
+
+// ::ng-deep .mat-stepper-vertical-line::before{
+//   border-left-color: red !important;
+// }
+
+::ng-deep .mat-step-label-selected{
+  font-size: 18px;
+}
+::ng-deep .mat-step-icon{
+  height: 30px !important;
+  width: 30px !important;
 }
