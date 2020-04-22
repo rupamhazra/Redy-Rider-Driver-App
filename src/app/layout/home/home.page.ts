@@ -114,7 +114,7 @@ export class HomePage implements OnInit {
       res => {
         //console.log(res);
         this.car_details_d = res.result;
-        this.storage.set('car_details', res.result);
+        //this.storage.set('car_details', res.result);
         this.progress_bar = false;
       },
       error => {

@@ -499,7 +499,7 @@ export class LocationTrackingPage implements OnInit {
 
   stopTracking() {
     //console.log("distance dirve",parseFloat(this.driver_distance_from_ending_point));
-
+    console.log('gghhh')
     const that = this;
     var ending_driver_current_lat;
     var ending_driver_current_lng;
@@ -578,7 +578,7 @@ export class LocationTrackingPage implements OnInit {
     let request_data = {
       "type": "drive_start",
       "route_id": this.route_id,
-      "route_timing_id": 0,
+      "route_timing_id": this.route_timing_id,
       "car_id": this.car_id,
       "driver_id": this.driver_id
     };
@@ -718,11 +718,10 @@ export class LocationTrackingPage implements OnInit {
         // var get_distance=response.rows[0].elements;
         that.driver_distance_from_next_destination = parseFloat(response.rows[0].elements[0].distance.text);
         let driver_distance_from_next_destination_response = response;
-        console.log('response_distance : ', driver_distance_from_next_destination_response);
+        //console.log('response_distance : ', driver_distance_from_next_destination_response);
 
         let driver_distance_from_next_stoppage = response.rows[0].elements[0].distance.text.split(" ");
-
-        console.log('distance : ', driver_distance_from_next_stoppage);
+        //console.log('distance : ', driver_distance_from_next_stoppage);
 
         if (driver_distance_from_next_stoppage[1] == 'km') {
           distance_checker = 0.1;
@@ -736,25 +735,19 @@ export class LocationTrackingPage implements OnInit {
             alert('Route Journey completed!');
             that.ride_end = true;
             that.next_stoppage_info = false;
-            //that.next_stoppage_info.location_name="Route Journey completed";
           }
           that.previous_stoppage_list_array.push(that.next_stoppage_list_array[0]);
           that.next_stoppage_list_array.shift();
           that.next_stoppage_info = that.next_stoppage_list_array[0];
           that.myStepper.next();
-          //console.log('that.stoppage_list ', that.stoppage_list)
-          //alert('distance'+ that.driver_distance_from_next_destination);
-
-          //alert('Next STop'+ that.next_stoppage_info);
-          //console.log('that.next_stoppage_list_array ',  that.next_stoppage_list_array);
-
         }
       }
     });
-
-
   }
-  goForward() {
-    this.myStepper.next();
+  viewFullDetails(pay_id, stoppage_id) {
+    let data = {
+      'from_which_page': 'location-tracking-for-each-passenger-details-page', 'pay_id': pay_id, 'stoppage_id': stoppage_id
+    }
+    this.modalService.openModal(RouteStoppageModalPage, data, 'passenger_modal_css');
   }
 }

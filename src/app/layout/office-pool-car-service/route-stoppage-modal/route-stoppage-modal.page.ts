@@ -75,6 +75,7 @@ export class RouteStoppageModalPage implements OnInit {
     let end_point = this.navParams.get('end_point');
     let start_point = this.navParams.get('start_point');
     let route_timing_id = this.navParams.get('route_timing_id');
+
     this.qr_image = this.navParams.get('qr_image');
     if (this.calling_page == 'bus-route-details-page') {
       this.loadingService.present();
@@ -92,7 +93,7 @@ export class RouteStoppageModalPage implements OnInit {
         }
       );
     }
-    else if (this.calling_page == 'myaccount-personal') {
+    if (this.calling_page == 'myaccount-personal') {
       console.log('myaccount-personal')
       this.getData(this.calling_page, this.navParams.get('userId'));
       this.form_personal = this.formBuilder.group({
@@ -103,7 +104,7 @@ export class RouteStoppageModalPage implements OnInit {
         user_id: [this.navParams.get('userId')]
       });
     }
-    else if (this.calling_page == 'myaccount-address') {
+    if (this.calling_page == 'myaccount-address') {
       console.log('myaccount-address')
       this.countryList();
       this.getData(this.calling_page, this.navParams.get('userId'));
@@ -138,6 +139,22 @@ export class RouteStoppageModalPage implements OnInit {
       this.register_otp = this.navParams.get('register_otp');
       this.userDetails = this.navParams.get('user_details');
       this.start();
+    }
+    if (this.calling_page == 'location-tracking-for-each-passenger-details-page') {
+      this.loadingService.present();
+      let request_data = { "type": "single_passenger", "pay_id": this.navParams.get('pay_id'), 'stoppage_id': this.navParams.get('stoppage_id') };
+      this.officePoolCarService.todayRidesService(request_data).subscribe(
+        res => {
+          //console.log("res:::" + res.msg);
+          this.items = res.result;
+          this.loadingService.dismiss();
+        },
+        error => {
+          //console.log("error::::" + error.error.msg);
+          this.loadingService.dismiss();
+          this.toasterService.showToast(error.error.msg, 2000)
+        }
+      );
     }
 
   }
