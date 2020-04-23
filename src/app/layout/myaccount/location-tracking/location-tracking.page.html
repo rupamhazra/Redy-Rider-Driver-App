@@ -20,76 +20,73 @@
 <ion-progress-bar type="indeterminate" class="progress_bar" *ngIf="progress_bar"></ion-progress-bar>
 <ion-content>
   <div #map id="map"  style="height: 300px;"></div>
-  
-  <ion-card style="display:none">
-    <ion-item>
-      <ion-icon name="pin" slot="start"></ion-icon>
-      <ion-label>previous locations</ion-label>
-      <ion-button fill="outline" slot="end">View</ion-button>
-    </ion-item>
-  
-    <ion-card-content>
-      last Stoppage
-    </ion-card-content>
-  </ion-card>
-
-  <ion-card>
-    <ion-card-header>
-      <ion-card-subtitle>Next Stop</ion-card-subtitle>
-      <ion-card-title *ngIf="next_stoppage_info" >{{next_stoppage_info.location_name}}</ion-card-title>
-    </ion-card-header>
-  
-    <ion-card-content>
-      
-       
-      <div *ngIf="next_stoppage_info">
-        Boardings <mat-icon matBadge="{{next_stoppage_info.total_passenger}}" matBadgeColor="primary" *ngIf="next_stoppage_info" class="boarding-badge"></mat-icon>
-      </div>
-
-      <div *ngIf="!next_stoppage_info">
-        Journey Ends, Please stop the ride!
+  <div *ngIf="!progress_bar">
+    <ion-card style="display:none">
+      <ion-item>
+        <ion-icon name="pin" slot="start"></ion-icon>
+        <ion-label>previous locations</ion-label>
+        <ion-button fill="outline" slot="end">View</ion-button>
+      </ion-item>
+      <ion-card-content>
+        last Stoppage
+      </ion-card-content>
+    </ion-card>
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>Next Stop</ion-card-subtitle>
+        <ion-card-title *ngIf="next_stoppage_info" >{{next_stoppage_info.location_name}}</ion-card-title>
+      </ion-card-header>
+    
+      <ion-card-content>
         
-      </div>
-      
-    </ion-card-content>
-  </ion-card>
-  
-  
-  <mat-vertical-stepper [linear]="false"  #stepper>
-    <mat-step [stepControl]="stoppage" *ngFor="let stoppage of stoppage_list; let i = index; let lst = last;" >
-      <ng-template matStepLabel>{{stoppage.location_name}}</ng-template>
-      <ion-list no-padding>
-        <h6 style="font-size: 14px;">Passenger List ({{stoppage.passenger_listed.length}})</h6>
-        <mat-divider></mat-divider>
-        <ion-item *ngFor="let passenger of stoppage.passenger_listed">
-          <ion-avatar slot="start" (click)="viewFullDetails(passenger.pay_id,stoppage.stoppage_id)">
-            <img src="{{passenger.pro_img}}" />
-          </ion-avatar>
-          <ion-label>
-            <h4>{{passenger.name}}</h4>
-            <p> {{passenger.mobile}} </p>
-            <p> <fa-icon [icon]="['fas','chair']" size="1x" class="rstar-icon"></fa-icon> Seats Count : {{passenger.how_many_seat}} </p>
-            <p> <fa-icon [icon]="['fas','chair']" size="1x" class="rstar-icon"></fa-icon> Seat No. {{passenger.seat_nos}} </p>
-          </ion-label>
-          <ion-icon name="ios-arrow-round-{{passenger.status}}" [color]="passenger.status == 'up' ? 'success' : 'danger'"></ion-icon>
-          <ion-icon name="ios-arrow-round-{{passenger.status}}" [color]="passenger.status == 'up' ? 'success' : 'danger'"></ion-icon>
-        </ion-item>
-      </ion-list>
-    </mat-step>
-  </mat-vertical-stepper>
-  <ion-card>
-    <ion-card-header>
-      <ion-card-subtitle>Prviously covered</ion-card-subtitle>
-      
-    </ion-card-header>
-    <ion-item class="ion-activated" *ngFor="let stoppage of previous_stoppage_list_array; let i = index; let lst = last;">
-      <ion-icon name="wifi" slot="start"></ion-icon>
-      
-      <ion-label><ion-badge color="primary">{{stoppage.total_passenger}} Boardings</ion-badge> {{stoppage.location_name}}</ion-label>
-    </ion-item>
-  </ion-card>
+        
+        <div *ngIf="next_stoppage_info">
+          Boardings <mat-icon matBadge="{{next_stoppage_info.total_passenger}}" matBadgeColor="primary" *ngIf="next_stoppage_info" class="boarding-badge"></mat-icon>
+        </div>
+
+        <div *ngIf="!next_stoppage_info">
+          Journey Ends, Please stop the ride!
+          
+        </div>
+        
+      </ion-card-content>
+    </ion-card>
+    <mat-vertical-stepper [linear]="false"  #stepper (selectionChange)="onStepChange($event)">
+      <mat-step [stepControl]="stoppage" *ngFor="let stoppage of stoppage_list; let i = index; let lst = last;" >
+        <ng-template matStepLabel>{{stoppage.location_name}}</ng-template>
+        <ion-list no-padding>
+          <h6 style="font-size: 14px;">Passenger List ({{stoppage.passenger_listed.length}})</h6>
+          <mat-divider></mat-divider>
+          <ion-item *ngFor="let passenger of stoppage.passenger_listed">
+            <ion-avatar slot="start" (click)="viewFullDetails(passenger.pay_id,stoppage.stoppage_id)">
+              <img src="{{passenger.pro_img}}" />
+            </ion-avatar>
+            <ion-label>
+              <h4>{{passenger.name}}</h4>
+              <p> {{passenger.mobile}} </p>
+              <p> <fa-icon [icon]="['fas','chair']" size="1x" class="rstar-icon"></fa-icon> Seats Count : {{passenger.how_many_seat}} </p>
+              <p> <fa-icon [icon]="['fas','chair']" size="1x" class="rstar-icon"></fa-icon> Seat No. {{passenger.seat_nos}} </p>
+            </ion-label>
+            <ion-icon name="ios-arrow-round-{{passenger.status}}" [color]="passenger.status == 'up' ? 'success' : 'danger'"></ion-icon>
+            <ion-icon name="ios-arrow-round-{{passenger.status}}" [color]="passenger.status == 'up' ? 'success' : 'danger'"></ion-icon>
+          </ion-item>
+        </ion-list>
+      </mat-step>
+    </mat-vertical-stepper>
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>Prviously covered</ion-card-subtitle>
+        
+      </ion-card-header>
+      <ion-item class="ion-activated" *ngFor="let stoppage of previous_stoppage_list_array; let i = index; let lst = last;">
+        <ion-icon name="wifi" slot="start"></ion-icon>
+        
+        <ion-label><ion-badge color="primary">{{stoppage.total_passenger}} Boardings</ion-badge> {{stoppage.location_name}}</ion-label>
+      </ion-item>
+    </ion-card>
+  </div>
 </ion-content>
-<ion-footer class="footer-bus-route-details">
+<ion-footer class="footer-bus-route-details" *ngIf="!progress_bar">
   <ion-grid no-margin no-paading>
     <ion-row text-center no-margin>
       <ion-col no-margin style="font-size: 20px;" (click)="startTracking()" *ngIf="!isTracking">

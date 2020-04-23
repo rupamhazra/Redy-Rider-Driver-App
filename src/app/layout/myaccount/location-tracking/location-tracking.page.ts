@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Subscription } from 'rxjs';
 import { Storage } from '@ionic/storage';
@@ -25,6 +25,7 @@ import { map } from 'rxjs/operators';
 import { element } from '@angular/core/src/render3';
 declare var window;
 import { MatStepper } from '@angular/material/stepper';
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
 @Component({
   selector: 'app-location-tracking',
@@ -108,7 +109,7 @@ export class LocationTrackingPage implements OnInit {
     public alertController: AlertController,
     private authenticationService: AuthenticationService,
     public modalService: ModalService,
-    private menuCtrl: MenuController,
+    private menuCtrl: MenuController
 
   ) {
 
@@ -132,6 +133,17 @@ export class LocationTrackingPage implements OnInit {
       }
     });
 
+  }
+  public onStepChange(event: any): void {
+    //console.log(event.selectedIndex);
+    const stepId = this.myStepper._getStepLabelId(parseInt(event.selectedIndex) - 1);
+    //console.log('stepId', stepId);
+    const stepElement = document.getElementById(stepId);
+    if (stepElement) {
+      setTimeout(() => {
+        stepElement.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+      }, 250);
+    }
   }
   getRideCarDetails() {
     this.progress_bar = true;
