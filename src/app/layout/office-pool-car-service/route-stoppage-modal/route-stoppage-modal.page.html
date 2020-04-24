@@ -8,6 +8,10 @@
     <ion-title *ngIf="calling_page=='my-booking-history'"><fa-icon [icon]="['fas','bus']"  class=""></fa-icon>&nbsp;Booking Details</ion-title>
     <ion-title *ngIf="calling_page=='booking-history-details'"><fa-icon [icon]="['fas','qrcode']"  class=""></fa-icon>&nbsp; QR Code</ion-title>
     <ion-title *ngIf="calling_page=='location-tracking-page'"><fa-icon [icon]="['fas','route']"  class=""></fa-icon>&nbsp; Stoppage Wise Passengers</ion-title>
+    <ion-title *ngIf="calling_page=='location-tracking-for-each-passenger-details-page'">
+      <fa-icon [icon]="['fas','eye']"  class=""></fa-icon>&nbsp; Passenger Details 
+      <ion-badge [color]="items.status == 'up' ? 'success' : 'danger'" style="margin-bottom: -5px;">{{items.status | uppercase}}</ion-badge>
+    </ion-title>
     <ion-icon ios="ios-close-circle" md="md-close-circle" 
     slot="end" style="zoom: 1.5;margin-right: 10px;" (click)="closeModal();"></ion-icon>
   </ion-toolbar>
@@ -267,6 +271,17 @@
           <ion-button size="default"  type="button" color="danger" (click)="closeModal()">Cancel</ion-button>
           <ion-button size="default" color="button"  type="button" (click)="otpVerify()">Continue</ion-button>
         </div>
+    </div>
+    <div class="ion-text-center ion-padding" *ngIf="calling_page=='location-tracking-for-each-passenger-details-page'">
+      <div class="top_div">
+        <ion-thumbnail class="_c_top_image">
+          <img src = "{{items.pro_img}}" alt="" style="opacity: 0.8;" />
+        </ion-thumbnail>
+        <h4 style="margin: 0px;">{{items.name}}</h4>
+        <p style="font-size: 14px;margin: 2px 0 0 0;">{{items.mobile}}</p>
+        <p> <fa-icon [icon]="['fas','chair']" size="1x" class="rstar-icon"></fa-icon> Seats Count : {{items.how_many_seat}} </p>
+        <p> <fa-icon [icon]="['fas','chair']" size="1x" class="rstar-icon"></fa-icon> Seat No. {{items.seat_nos}} </p>
+      </div>
     </div>
   </div>
 </ion-content>

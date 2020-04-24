@@ -79,3 +79,10 @@ ion-badge{
   height: 30px !important;
   width: 30px !important;
 }
+::ng-deep .mat-vertical-stepper-header {
+  pointer-events: none !important;
+  padding: 22px !important;
+  height: 10px !important;
+}
+
+

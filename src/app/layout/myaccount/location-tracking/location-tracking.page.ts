@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Subscription } from 'rxjs';
 import { Storage } from '@ionic/storage';
@@ -25,6 +25,7 @@ import { map } from 'rxjs/operators';
 import { element } from '@angular/core/src/render3';
 declare var window;
 import { MatStepper } from '@angular/material/stepper';
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
 @Component({
   selector: 'app-location-tracking',
@@ -108,7 +109,7 @@ export class LocationTrackingPage implements OnInit {
     public alertController: AlertController,
     private authenticationService: AuthenticationService,
     public modalService: ModalService,
-    private menuCtrl: MenuController,
+    private menuCtrl: MenuController
 
   ) {
 
@@ -132,6 +133,17 @@ export class LocationTrackingPage implements OnInit {
       }
     });
 
+  }
+  public onStepChange(event: any): void {
+    //console.log(event.selectedIndex);
+    const stepId = this.myStepper._getStepLabelId(parseInt(event.selectedIndex) - 1);
+    //console.log('stepId', stepId);
+    const stepElement = document.getElementById(stepId);
+    if (stepElement) {
+      setTimeout(() => {
+        stepElement.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+      }, 250);
+    }
   }
   getRideCarDetails() {
     this.progress_bar = true;
@@ -499,7 +511,7 @@ export class LocationTrackingPage implements OnInit {
 
   stopTracking() {
     //console.log("distance dirve",parseFloat(this.driver_distance_from_ending_point));
-
+    console.log('gghhh')
     const that = this;
     var ending_driver_current_lat;
     var ending_driver_current_lng;
@@ -578,7 +590,7 @@ export class LocationTrackingPage implements OnInit {
     let request_data = {
       "type": "drive_start",
       "route_id": this.route_id,
-      "route_timing_id": 0,
+      "route_timing_id": this.route_timing_id,
       "car_id": this.car_id,
       "driver_id": this.driver_id
     };
@@ -721,8 +733,7 @@ export class LocationTrackingPage implements OnInit {
         //console.log('response_distance : ', driver_distance_from_next_destination_response);
 
         let driver_distance_from_next_stoppage = response.rows[0].elements[0].distance.text.split(" ");
-
-        console.log('distance : ', driver_distance_from_next_stoppage);
+        //console.log('distance : ', driver_distance_from_next_stoppage);
 
         
         let fire_base_car_id = that.car_type + "-" + that.car_id;
@@ -769,25 +780,19 @@ export class LocationTrackingPage implements OnInit {
             alert('Route Journey completed!');
             that.ride_end = true;
             that.next_stoppage_info = false;
-            //that.next_stoppage_info.location_name="Route Journey completed";
           }
           that.previous_stoppage_list_array.push(that.next_stoppage_list_array[0]);
           that.next_stoppage_list_array.shift();
           that.next_stoppage_info = that.next_stoppage_list_array[0];
           that.myStepper.next();
-          //console.log('that.stoppage_list ', that.stoppage_list)
-          //alert('distance'+ that.driver_distance_from_next_destination);
-
-          //alert('Next STop'+ that.next_stoppage_info);
-          //console.log('that.next_stoppage_list_array ',  that.next_stoppage_list_array);
-
         }
       }
     });
-
-
   }
-  goForward() {
-    this.myStepper.next();
+  viewFullDetails(pay_id, stoppage_id) {
+    let data = {
+      'from_which_page': 'location-tracking-for-each-passenger-details-page', 'pay_id': pay_id, 'stoppage_id': stoppage_id
+    }
+    this.modalService.openModal(RouteStoppageModalPage, data, 'passenger_modal_css');
   }
 }
