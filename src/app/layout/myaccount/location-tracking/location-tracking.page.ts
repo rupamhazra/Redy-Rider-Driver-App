@@ -258,7 +258,7 @@ export class LocationTrackingPage implements OnInit {
   calculateAndDisplayRoute() {
     const that = this;
 
-    console.log(this.DirectionsWaypoint);
+    //console.log(this.DirectionsWaypoint);
     that.directionsService.route({
       origin: this.location_source, //origin 
       destination: this.location_destination, //destination
@@ -718,11 +718,43 @@ export class LocationTrackingPage implements OnInit {
         // var get_distance=response.rows[0].elements;
         that.driver_distance_from_next_destination = parseFloat(response.rows[0].elements[0].distance.text);
         let driver_distance_from_next_destination_response = response;
-        console.log('response_distance : ', driver_distance_from_next_destination_response);
+        //console.log('response_distance : ', driver_distance_from_next_destination_response);
 
         let driver_distance_from_next_stoppage = response.rows[0].elements[0].distance.text.split(" ");
 
         console.log('distance : ', driver_distance_from_next_stoppage);
+
+        
+        let fire_base_car_id = that.car_type + "-" + that.car_id;
+        let record = {};
+        var debugger_already_exist_firebase;
+        record['current_cordinates'] = current_pos_marker;
+        record['next_stoppage_cordinates'] = next_stop_pos_marker;
+        record['next_stoppage_name'] = that.next_stoppage_info.location_name; //////car name
+        record['distance'] =driver_distance_from_next_stoppage;
+        //alert(fire_base_car_id);
+        that.afs.collection('debugger').snapshotChanges().subscribe(data => {
+          //this.driver_curent_live_location = 
+          data.map(e => {
+            if (e.payload.doc.id == fire_base_car_id) {
+              
+              debugger_already_exist_firebase = true;
+              //console.log("firebase data",e.payload.doc);
+            }
+          })
+        });
+        if (debugger_already_exist_firebase == true) {
+          
+          that.afs.collection('debugger').doc(fire_base_car_id).update(record);
+          
+        }else{
+          
+          that.afs.collection('debugger').doc(fire_base_car_id).set(record); //////car id
+        }
+
+
+
+
 
         if (driver_distance_from_next_stoppage[1] == 'km') {
           distance_checker = 0.1;
@@ -733,6 +765,7 @@ export class LocationTrackingPage implements OnInit {
         if (that.driver_distance_from_next_destination <= distance_checker) {
           reached_stoppage = true;
           if (that.next_stoppage_list_array[0].stop == true) {
+            that.afs.collection('stoppage').doc(fire_base_car_id).set(record);
             alert('Route Journey completed!');
             that.ride_end = true;
             that.next_stoppage_info = false;

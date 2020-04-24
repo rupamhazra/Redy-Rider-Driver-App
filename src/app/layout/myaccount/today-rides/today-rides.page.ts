@@ -46,7 +46,7 @@ export class TodayRidesPage implements OnInit {
     let request_data = { "type": "driver", "user_id": this.userId };
     this.officePoolCarService.todayRidesService(request_data).subscribe(
       res => {
-        //console.log('res', res)
+        ////console.log('res', res)
         this.result = res.result;
         //console.log(this.result);
         //this.result.shift();
