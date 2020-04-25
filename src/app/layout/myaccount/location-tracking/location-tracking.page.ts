@@ -724,6 +724,7 @@ export class LocationTrackingPage implements OnInit {
         alert('Error was: ' + status);
       } else {
 
+        console.log("response ::::::::", response)
         // var originList = response.originAddresses;
         // var destinationList = response.destinationAddresses;
 
@@ -735,31 +736,31 @@ export class LocationTrackingPage implements OnInit {
         let driver_distance_from_next_stoppage = response.rows[0].elements[0].distance.text.split(" ");
         //console.log('distance : ', driver_distance_from_next_stoppage);
 
-        
+
         let fire_base_car_id = that.car_type + "-" + that.car_id;
         let record = {};
         var debugger_already_exist_firebase;
         record['current_cordinates'] = current_pos_marker;
         record['next_stoppage_cordinates'] = next_stop_pos_marker;
         record['next_stoppage_name'] = that.next_stoppage_info.location_name; //////car name
-        record['distance'] =driver_distance_from_next_stoppage;
+        record['distance'] = driver_distance_from_next_stoppage;
         //alert(fire_base_car_id);
         that.afs.collection('debugger').snapshotChanges().subscribe(data => {
           //this.driver_curent_live_location = 
           data.map(e => {
             if (e.payload.doc.id == fire_base_car_id) {
-              
+
               debugger_already_exist_firebase = true;
               //console.log("firebase data",e.payload.doc);
             }
           })
         });
         if (debugger_already_exist_firebase == true) {
-          
+
           that.afs.collection('debugger').doc(fire_base_car_id).update(record);
-          
-        }else{
-          
+
+        } else {
+
           that.afs.collection('debugger').doc(fire_base_car_id).set(record); //////car id
         }
 
