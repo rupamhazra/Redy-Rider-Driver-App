@@ -210,6 +210,7 @@ export class LocationTrackingPage implements OnInit {
           this.driver_current_lat = location.latitude;
           this.driver_current_lng = location.longitude;
           this.update_driver_cordinated_to_firebase();
+          this.get_next_stoppage_info();
           this.backgroundGeolocation.finish(); // FOR IOS ONLY
         });
     });
@@ -406,6 +407,8 @@ export class LocationTrackingPage implements OnInit {
               record['lat'] = driver_current_lat_1;
               record['long'] = driver_current_lng_1;
               record['name'] = ""; //////car name
+              record['time']=((date.getHours()) * 100) + date.getMinutes();
+              record['date']=date.getDate() + '/' + date.getMonth() + '/'+ date.getFullYear();
 
               let car_id = that.car_type + "-" + that.car_id;
               that.afs.collection('locations').doc(car_id).set(record); //////car id
@@ -443,7 +446,7 @@ export class LocationTrackingPage implements OnInit {
 
     this.backgroundGeolocation.start();
     let options = {
-      frequency: 3000,
+      timeout: 1000,
       enableHighAccuracy: true
     };
     let point_nember = 1;
@@ -463,7 +466,7 @@ export class LocationTrackingPage implements OnInit {
           this.driver_current_lat = position.coords.latitude;
           this.driver_current_lng = position.coords.longitude;
           let new_driver_location = new google.maps.LatLng(this.driver_current_lat, this.driver_current_lng);
-
+          //console.log('new_driver_location', new_driver_location)
           this.get_next_stoppage_info();
           this.driver_marker.setPosition(new_driver_location);
 
@@ -500,15 +503,123 @@ export class LocationTrackingPage implements OnInit {
     this.sendNotificationToPassengers();
   }
 
+  get_next_stoppage_info() {
+
+    const that = this;
+    var reached_stoppage;
+    var distance_checker;
+
+    let current_pos_marker = {
+      lat: parseFloat(this.driver_current_lat),
+      lng: parseFloat(this.driver_current_lng)
+    };
+
+
+    let next_stop_pos_marker = {
+      lat: parseFloat(this.next_stoppage_list_array[0].lat),
+      lng: parseFloat(this.next_stoppage_list_array[0].lng)
+    };
+
+    console.log('current loaction stoppage : ', current_pos_marker);
+    console.log('next loaction stoppage : ', next_stop_pos_marker);
+
+    this.distanceService.getDistanceMatrix({
+      origins: [current_pos_marker],
+      destinations: [next_stop_pos_marker],
+      travelMode: 'DRIVING',
+      unitSystem: google.maps.UnitSystem.METRIC,
+      avoidHighways: false,
+      avoidTolls: false
+    }, function (response, status) {
+      if (status !== 'OK') {
+        alert('Error was: ' + status);
+      } else {
+
+        console.log("response ::::::::", response)
+        // var originList = response.originAddresses;
+        // var destinationList = response.destinationAddresses;
+
+        // var get_distance=response.rows[0].elements;
+        that.driver_distance_from_next_destination = parseFloat(response.rows[0].elements[0].distance.text);
+        let driver_distance_from_next_destination_response = response;
+        //console.log('response_distance : ', driver_distance_from_next_destination_response);
+
+        let driver_distance_from_next_stoppage = response.rows[0].elements[0].distance.text.split(" ");
+        //console.log('distance : ', driver_distance_from_next_stoppage);
+
+        let date = new Date();
+
+        let fire_base_car_id = that.car_type + "-" + that.car_id;
+        let record = {};
+        var debugger_already_exist_firebase;
+        record['current_cordinates'] = current_pos_marker;
+        record['next_stoppage_cordinates'] = next_stop_pos_marker;
+        record['next_stoppage_name'] = that.next_stoppage_info.location_name; //////car name
+        record['distance'] = driver_distance_from_next_stoppage;
+        record['time']=((date.getHours()) * 100) + date.getMinutes();
+        record['date']=date.getDate() + '/' + date.getMonth() + '/'+ date.getFullYear();
+        //alert(fire_base_car_id);
+        that.afs.collection('debugger').snapshotChanges().subscribe(data => {
+          //this.driver_curent_live_location = 
+          data.map(e => {
+            if (e.payload.doc.id == fire_base_car_id) {
+
+              debugger_already_exist_firebase = true;
+              //console.log("firebase data",e.payload.doc);
+            }
+          })
+        });
+        if (debugger_already_exist_firebase == true) {
+
+          that.afs.collection('debugger').doc(fire_base_car_id).update(record);
+
+        } else {
+
+          that.afs.collection('debugger').doc(fire_base_car_id).set(record); //////car id
+        }
+
+
+
+
+
+        if (driver_distance_from_next_stoppage[1] == 'km') {
+          distance_checker = 0.1;
+        } else {
+          distance_checker = 99;
+        }
+
+        console.log("that.driver_distance_from_next_destination", that.driver_distance_from_next_destination);
+        if (that.driver_distance_from_next_destination <= distance_checker) {
+          reached_stoppage = true;
+          if (that.next_stoppage_list_array[0].stop == true) {
+            that.afs.collection('stoppage').doc(fire_base_car_id).set(record);
+            alert('Route Journey completed!');
+            that.ride_end = true;
+            that.next_stoppage_info = false;
+          }
+          that.previous_stoppage_list_array.push(that.next_stoppage_list_array[0]);
+          that.next_stoppage_list_array.shift();
+          that.next_stoppage_info = that.next_stoppage_list_array[0];
+          that.myStepper.next();
+        }
+      }
+    });
+  }
+
   update_driver_cordinated_to_firebase() {
+
+    let date = new Date();
+
+
     let record = {};
     record['lat'] = this.driver_current_lat;
     record['long'] = this.driver_current_lng;
     record['name'] = 'test1.03.2020'; ///////car name optional
+    record['time']=((date.getHours()) * 100) + date.getMinutes();
+    record['date']=date.getDate() + '/' + date.getMonth() + '/'+ date.getFullYear();
     let car_id = this.car_type + "-" + this.car_id; ///////car id required
     this.afs.collection('locations').doc(car_id).update(record);
   }
-
   stopTracking() {
     //console.log("distance dirve",parseFloat(this.driver_distance_from_ending_point));
     console.log('gghhh')
@@ -685,109 +796,6 @@ export class LocationTrackingPage implements OnInit {
   viewRoute() {
     let data = { 'from_which_page': 'location-tracking-page', 'stoppage_list': this.stoppage_list }
     this.modalService.openModal(RouteStoppageModalPage, data, 'stoppage_modal_css');
-  }
-
-
-  get_next_stoppage_info() {
-
-    const that = this;
-    var reached_stoppage;
-    var distance_checker;
-
-    //this.next_stoppage_list_array.forEach(element=>{
-
-
-
-    let current_pos_marker = {
-      lat: parseFloat(this.driver_current_lat),
-      lng: parseFloat(this.driver_current_lng)
-    };
-
-
-    let next_stop_pos_marker = {
-      lat: parseFloat(this.next_stoppage_list_array[0].lat),
-      lng: parseFloat(this.next_stoppage_list_array[0].lng)
-    };
-
-    console.log('current loaction stoppage : ', current_pos_marker);
-    console.log('next loaction stoppage : ', next_stop_pos_marker);
-
-    this.distanceService.getDistanceMatrix({
-      origins: [current_pos_marker],
-      destinations: [next_stop_pos_marker],
-      travelMode: 'DRIVING',
-      unitSystem: google.maps.UnitSystem.METRIC,
-      avoidHighways: false,
-      avoidTolls: false
-    }, function (response, status) {
-      if (status !== 'OK') {
-        alert('Error was: ' + status);
-      } else {
-
-        // var originList = response.originAddresses;
-        // var destinationList = response.destinationAddresses;
-
-        // var get_distance=response.rows[0].elements;
-        that.driver_distance_from_next_destination = parseFloat(response.rows[0].elements[0].distance.text);
-        let driver_distance_from_next_destination_response = response;
-        //console.log('response_distance : ', driver_distance_from_next_destination_response);
-
-        let driver_distance_from_next_stoppage = response.rows[0].elements[0].distance.text.split(" ");
-        //console.log('distance : ', driver_distance_from_next_stoppage);
-
-        
-        let fire_base_car_id = that.car_type + "-" + that.car_id;
-        let record = {};
-        var debugger_already_exist_firebase;
-        record['current_cordinates'] = current_pos_marker;
-        record['next_stoppage_cordinates'] = next_stop_pos_marker;
-        record['next_stoppage_name'] = that.next_stoppage_info.location_name; //////car name
-        record['distance'] =driver_distance_from_next_stoppage;
-        //alert(fire_base_car_id);
-        that.afs.collection('debugger').snapshotChanges().subscribe(data => {
-          //this.driver_curent_live_location = 
-          data.map(e => {
-            if (e.payload.doc.id == fire_base_car_id) {
-              
-              debugger_already_exist_firebase = true;
-              //console.log("firebase data",e.payload.doc);
-            }
-          })
-        });
-        if (debugger_already_exist_firebase == true) {
-          
-          that.afs.collection('debugger').doc(fire_base_car_id).update(record);
-          
-        }else{
-          
-          that.afs.collection('debugger').doc(fire_base_car_id).set(record); //////car id
-        }
-
-
-
-
-
-        if (driver_distance_from_next_stoppage[1] == 'km') {
-          distance_checker = 0.1;
-        } else {
-          distance_checker = 99;
-        }
-
-        if (that.driver_distance_from_next_destination <= distance_checker) {
-          reached_stoppage = true;
-          if (that.next_stoppage_list_array[0].stop == true) {
-            that.afs.collection('stoppage').doc(fire_base_car_id).set(record);
-            alert('Route Journey completed!');
-            that.ride_end = true;
-            that.next_stoppage_info = false;
-          }
-          that.previous_stoppage_list_array.push(that.next_stoppage_list_array[0]);
-          that.next_stoppage_list_array.shift();
-          that.next_stoppage_info = that.next_stoppage_list_array[0];
-          that.myStepper.next();
-        }
-      }
-    });
   }
   viewFullDetails(pay_id, stoppage_id) {
     let data = {
