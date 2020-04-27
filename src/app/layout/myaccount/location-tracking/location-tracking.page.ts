@@ -508,6 +508,7 @@ export class LocationTrackingPage implements OnInit {
     const that = this;
     var reached_stoppage;
     var distance_checker;
+    var next_stoppage_already_exist_firebase; 
 
     let current_pos_marker = {
       lat: parseFloat(this.driver_current_lat),
@@ -600,6 +601,28 @@ export class LocationTrackingPage implements OnInit {
           that.previous_stoppage_list_array.push(that.next_stoppage_list_array[0]);
           that.next_stoppage_list_array.shift();
           that.next_stoppage_info = that.next_stoppage_list_array[0];
+
+          that.afs.collection('next_stoppage').snapshotChanges().subscribe(data => {
+            //this.driver_curent_live_location = 
+            data.map(e => {
+              if (e.payload.doc.id == fire_base_car_id) {
+  
+                next_stoppage_already_exist_firebase = true;
+                //console.log("firebase data",e.payload.doc);
+              }
+            })
+          });
+          if (next_stoppage_already_exist_firebase == true) {
+  
+            that.afs.collection('next_stoppage').doc(fire_base_car_id).update(record);
+  
+          } else {
+  
+            that.afs.collection('next_stoppage').doc(fire_base_car_id).set(record); //////car id
+          }
+
+
+
           that.myStepper.next();
         }
       }
