@@ -602,6 +602,9 @@ export class LocationTrackingPage implements OnInit {
           that.next_stoppage_list_array.shift();
           that.next_stoppage_info = that.next_stoppage_list_array[0];
 
+          let record1={};
+          record1['next_stoppage_list_array']=that.next_stoppage_list_array;
+
           that.afs.collection('next_stoppage').snapshotChanges().subscribe(data => {
             //this.driver_curent_live_location = 
             data.map(e => {
@@ -614,11 +617,11 @@ export class LocationTrackingPage implements OnInit {
           });
           if (next_stoppage_already_exist_firebase == true) {
   
-            that.afs.collection('next_stoppage').doc(fire_base_car_id).update(record);
+            that.afs.collection('next_stoppage').doc(fire_base_car_id).update(record1);
   
           } else {
   
-            that.afs.collection('next_stoppage').doc(fire_base_car_id).set(record); //////car id
+            that.afs.collection('next_stoppage').doc(fire_base_car_id).set(record1); //////car id
           }
 
 
