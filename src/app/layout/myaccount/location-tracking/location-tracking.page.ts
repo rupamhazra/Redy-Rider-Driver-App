@@ -770,7 +770,7 @@ export class LocationTrackingPage implements OnInit {
         if (driver_distance_from_next_stoppage[1] == 'km') {
           distance_checker = 0.1;
         } else {
-          distance_checker = 100;
+          distance_checker = 99;
         }
 
         if (that.driver_distance_from_next_destination <= distance_checker) {
