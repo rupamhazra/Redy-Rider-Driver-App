@@ -43,13 +43,14 @@ export class LocationTrackingPage implements OnInit {
   lat;
   lng;
   last_driver_postion;
-  driver_distance_from_next_destination;
+  //driver_distance_from_next_destination;
   next_stoppage_list_array = [];
   next_stoppage_info;
   previous_stoppage_list_array = [];
   maphideMe;
   car_icon;
   ride_end;
+  isTracking_resume = false;
 
 
   directionsService = new google.maps.DirectionsService;
@@ -122,6 +123,7 @@ export class LocationTrackingPage implements OnInit {
     this.getRideCarDetails();
     this.storage.get('USER_INFO').then((val) => {
       if (val) {
+        //console.log(val);
         //this.refer_code = val.user_account_no+'-'+val.name;
         this.anonLogin(val.user_account_no + '-' + val.name + '-' + new Date());
       }
@@ -132,6 +134,9 @@ export class LocationTrackingPage implements OnInit {
         this.isTracking = true;
       }
     });
+    
+    
+
 
   }
   public onStepChange(event: any): void {
@@ -156,7 +161,7 @@ export class LocationTrackingPage implements OnInit {
     this.officePoolCarService.todayRidesService(request_data).subscribe(
       element => {
 
-        console.log(element);
+        console.log('1',element);
         this.progress_bar = false;
         this.route_id = element.result.route_id;
         this.stoppage_list = element.result.stoppage_list;
@@ -183,6 +188,22 @@ export class LocationTrackingPage implements OnInit {
         });
         this.ride_startTime = parseFloat(element.result.start_end_time.start_time);
         this.ride_endTime = parseFloat(element.result.start_end_time.end_time);
+
+        let car_id = this.car_type + "-" + this.car_id;////// for checking resume
+          //console.log(car_id);
+          //alert(car_id);
+          this.afs.collection('locations').snapshotChanges().subscribe(data => {
+            //this.driver_curent_live_location = 
+            data.map(e => {
+              if (e.payload.doc.id == car_id) {
+                //alert(1);
+                this.isTracking_resume = true;
+                console.log("isTracking_resume");
+              }
+            })
+          });
+
+
       },
       error => {
         //console.log("error::::" + error.error.msg);
@@ -191,6 +212,7 @@ export class LocationTrackingPage implements OnInit {
       }
     );
 
+    
 
   }
   ngOnInit() {
@@ -541,7 +563,7 @@ export class LocationTrackingPage implements OnInit {
         // var destinationList = response.destinationAddresses;
 
         // var get_distance=response.rows[0].elements;
-        that.driver_distance_from_next_destination = parseFloat(response.rows[0].elements[0].distance.text);
+        let driver_distance_from_next_destination = parseFloat(response.rows[0].elements[0].distance.text);
         let driver_distance_from_next_destination_response = response;
         //console.log('response_distance : ', driver_distance_from_next_destination_response);
 
@@ -589,8 +611,8 @@ export class LocationTrackingPage implements OnInit {
           distance_checker = 99;
         }
 
-        console.log("that.driver_distance_from_next_destination", that.driver_distance_from_next_destination);
-        if (that.driver_distance_from_next_destination <= distance_checker) {
+        console.log("driver_distance_from_next_destination", driver_distance_from_next_destination);
+        if (driver_distance_from_next_destination <= distance_checker) {
           reached_stoppage = true;
           if (that.next_stoppage_list_array[0].stop == true) {
             that.afs.collection('stoppage').doc(fire_base_car_id).set(record);
@@ -688,6 +710,7 @@ export class LocationTrackingPage implements OnInit {
           if (that.driver_distance_from_starting_point <= 200) {
 
             that.isTracking = false;
+            that.isTracking_resume=false;
 
             that.backgroundGeolocation.stop();
             that.watch.unsubscribe();

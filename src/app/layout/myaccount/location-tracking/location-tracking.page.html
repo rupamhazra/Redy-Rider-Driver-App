@@ -89,15 +89,21 @@
 <ion-footer class="footer-bus-route-details" *ngIf="!progress_bar">
   <ion-grid no-margin no-paading>
     <ion-row text-center no-margin>
-      <ion-col no-margin style="font-size: 20px;" (click)="startTracking()" *ngIf="!isTracking">
+      <ion-col no-margin style="font-size: 20px;" (click)="startTracking()" *ngIf="!isTracking && !isTracking_resume">
         <fa-icon [icon]="['fas','play-circle']" size="1x" class="rstar-icon"></fa-icon>
         START 
       </ion-col>
     </ion-row>
     <ion-row text-center no-margin>
-      <ion-col no-margin style="font-size: 20px;" (click)="stopConfirm()" *ngIf="isTracking">
+      <ion-col no-margin style="font-size: 20px;" (click)="stopConfirm()" *ngIf="isTracking && !isTracking_resume ">
         <fa-icon [icon]="['fas','stop-circle']" size="1x" class="rstar-icon"></fa-icon>
         STOP
+      </ion-col>
+    </ion-row>
+    <ion-row text-center no-margin>
+      <ion-col no-margin style="font-size: 20px;" (click)="startTracking()" *ngIf="isTracking_resume">
+        <fa-icon [icon]="['fas','play-circle']" size="1x" class="rstar-icon"></fa-icon>
+        Resume 
       </ion-col>
     </ion-row>
   </ion-grid>
