@@ -190,18 +190,18 @@ export class LocationTrackingPage implements OnInit {
         this.ride_endTime = parseFloat(element.result.start_end_time.end_time);
 
         let car_id = this.car_type + "-" + this.car_id;////// for checking resume
-          //console.log(car_id);
-          //alert(car_id);
-          this.afs.collection('locations').snapshotChanges().subscribe(data => {
-            //this.driver_curent_live_location = 
-            data.map(e => {
-              if (e.payload.doc.id == car_id) {
-                //alert(1);
-                this.isTracking_resume = true;
-                console.log("isTracking_resume");
-              }
-            })
-          });
+        //console.log(car_id);
+        //alert(car_id);
+        this.afs.collection('locations').snapshotChanges().subscribe(data => {
+          //this.driver_curent_live_location = 
+          data.map(e => {
+            if (e.payload.doc.id == car_id) {
+              //alert(1);
+              this.isTracking_resume = true;
+              console.log("isTracking_resume");
+            }
+          })
+        });
 
 
       },
@@ -237,6 +237,8 @@ export class LocationTrackingPage implements OnInit {
         });
     });
 
+   
+
   }
   ionDidOpen() {
     this.menuCtrl.enable(false);
@@ -248,6 +250,7 @@ export class LocationTrackingPage implements OnInit {
   ionViewWillEnter() {
     console.log('ionViewWillEnter')
     //this.loadMap();
+    
   }
   loadMap(location_source, location_destination) {
     this.map = new google.maps.Map(this.mapElement.nativeElement, {
@@ -355,6 +358,7 @@ export class LocationTrackingPage implements OnInit {
     });
   }
   startTracking() {
+    this.isTracking_resume = false;
     let car_id = this.car_type + "-" + this.car_id;
     //console.log("car: ", car_id);
     this.afs.collection('locations').snapshotChanges().subscribe(data => {
@@ -457,7 +461,9 @@ export class LocationTrackingPage implements OnInit {
   }
 
   tracking_location() {
+    
     this.isTracking = true;
+    
     this.storage.set('isTracking', true);
     this.back_button_visible = false;
     this.insomnia.keepAwake()
@@ -468,7 +474,7 @@ export class LocationTrackingPage implements OnInit {
 
     this.backgroundGeolocation.start();
     let options = {
-      timeout: 1000,
+      timeout: 3000,
       enableHighAccuracy: true
     };
     let point_nember = 1;
@@ -529,18 +535,20 @@ export class LocationTrackingPage implements OnInit {
 
     const that = this;
     var reached_stoppage;
-    var distance_checker;
+    
     var next_stoppage_already_exist_firebase; 
 
-    let current_pos_marker = {
+    let current_pos_marker =new google.maps.LatLng(this.driver_current_lat, this.driver_current_lng);
+    let current_pos_marker1 = {
       lat: parseFloat(this.driver_current_lat),
       lng: parseFloat(this.driver_current_lng)
     };
 
 
-    let next_stop_pos_marker = {
-      lat: parseFloat(this.next_stoppage_list_array[0].lat),
-      lng: parseFloat(this.next_stoppage_list_array[0].lng)
+    let next_stop_pos_marker =new google.maps.LatLng(parseFloat(that.next_stoppage_list_array[0].lat),parseFloat(that.next_stoppage_list_array[0].lng));
+    let next_stop_pos_marker1 = {
+      lat: parseFloat(that.next_stoppage_list_array[0].lat),
+      lng: parseFloat(that.next_stoppage_list_array[0].lng)
     };
 
     console.log('current loaction stoppage : ', current_pos_marker);
@@ -604,7 +612,7 @@ export class LocationTrackingPage implements OnInit {
 
 
 
-
+        var distance_checker;
         if (driver_distance_from_next_stoppage[1] == 'km') {
           distance_checker = 0.1;
         } else {
@@ -706,11 +714,19 @@ export class LocationTrackingPage implements OnInit {
           //console.log('originList' , that.driver_distance_from_starting_point);
           console.log('destinationList', that.driver_distance_from_ending_point);
 
+          let driver_distance_from_next_stoppage = response.rows[0].elements[0].distance.text.split(" ");
+          var distance_checker;
+          if (driver_distance_from_next_stoppage[1] == 'km') {
+            distance_checker = 200;
+          } else {
+            distance_checker = 20000;
+          }
 
-          if (that.driver_distance_from_starting_point <= 200) {
 
-            that.isTracking = false;
+          if (that.driver_distance_from_starting_point <= distance_checker) {
             that.isTracking_resume=false;
+            that.isTracking = false;
+            
 
             that.backgroundGeolocation.stop();
             that.watch.unsubscribe();
@@ -760,6 +776,7 @@ export class LocationTrackingPage implements OnInit {
         //this.result_data = res.result;
         //console.log("res:::" + this.stopp_list.length);
         this.storage.set('drive_history_id', res.result.drive_history_id)
+        this.isTracking_resume = false;
         this.progress_bar = false;
       },
       error => {
