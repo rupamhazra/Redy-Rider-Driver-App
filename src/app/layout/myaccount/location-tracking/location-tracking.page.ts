@@ -184,14 +184,14 @@ export class LocationTrackingPage implements OnInit {
             location: { lat: parseFloat(element.location.lat), lng: parseFloat(element.location.lng) },
             stopover: element.stopover
           };
-          //console.log('element:',waypoint_location);
+         
           this.DirectionsWaypoint.push(waypoint_location);
         });
         this.ride_startTime = parseFloat(element.result.start_end_time.start_time);
         this.ride_endTime = parseFloat(element.result.start_end_time.end_time);
 
-       
-        if(element.drive_status==1){
+        console.log('element:',element.result.drive_status);
+        if(element.result.drive_status=='1'){
           this.isTracking_resume = true;
           
         }
@@ -769,7 +769,6 @@ export class LocationTrackingPage implements OnInit {
         //this.result_data = res.result;
         //console.log("res:::" + this.stopp_list.length);
         this.storage.set('drive_history_id', res.result.drive_history_id)
-        this.isTracking_resume = false;
         this.progress_bar = false;
       },
       error => {
