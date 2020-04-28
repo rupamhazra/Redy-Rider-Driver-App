@@ -134,8 +134,8 @@ export class LocationTrackingPage implements OnInit {
         this.isTracking = true;
       }
     });
-    
-    
+
+
 
 
   }
@@ -161,7 +161,7 @@ export class LocationTrackingPage implements OnInit {
     this.officePoolCarService.todayRidesService(request_data).subscribe(
       element => {
 
-        console.log('1',element);
+        console.log('1', element);
         this.progress_bar = false;
         this.route_id = element.result.route_id;
         this.stoppage_list = element.result.stoppage_list;
@@ -190,18 +190,18 @@ export class LocationTrackingPage implements OnInit {
         this.ride_endTime = parseFloat(element.result.start_end_time.end_time);
 
         let car_id = this.car_type + "-" + this.car_id;////// for checking resume
-          //console.log(car_id);
-          //alert(car_id);
-          this.afs.collection('locations').snapshotChanges().subscribe(data => {
-            //this.driver_curent_live_location = 
-            data.map(e => {
-              if (e.payload.doc.id == car_id) {
-                //alert(1);
-                this.isTracking_resume = true;
-                console.log("isTracking_resume");
-              }
-            })
-          });
+        //console.log(car_id);
+        //alert(car_id);
+        this.afs.collection('locations').snapshotChanges().subscribe(data => {
+          //this.driver_curent_live_location = 
+          data.map(e => {
+            if (e.payload.doc.id == car_id) {
+              //alert(1);
+              this.isTracking_resume = true;
+              console.log("isTracking_resume");
+            }
+          })
+        });
 
 
       },
@@ -212,7 +212,7 @@ export class LocationTrackingPage implements OnInit {
       }
     );
 
-    
+
 
   }
   ngOnInit() {
@@ -429,8 +429,8 @@ export class LocationTrackingPage implements OnInit {
               record['lat'] = driver_current_lat_1;
               record['long'] = driver_current_lng_1;
               record['name'] = ""; //////car name
-              record['time']=((date.getHours()) * 100) + date.getMinutes();
-              record['date']=date.getDate() + '/' + date.getMonth() + '/'+ date.getFullYear();
+              record['time'] = ((date.getHours()) * 100) + date.getMinutes();
+              record['date'] = date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
 
               let car_id = that.car_type + "-" + that.car_id;
               that.afs.collection('locations').doc(car_id).set(record); //////car id
@@ -530,7 +530,7 @@ export class LocationTrackingPage implements OnInit {
     const that = this;
     var reached_stoppage;
     var distance_checker;
-    var next_stoppage_already_exist_firebase; 
+    var next_stoppage_already_exist_firebase;
 
     let current_pos_marker = {
       lat: parseFloat(this.driver_current_lat),
@@ -545,7 +545,8 @@ export class LocationTrackingPage implements OnInit {
 
     console.log('current loaction stoppage : ', current_pos_marker);
     console.log('next loaction stoppage : ', next_stop_pos_marker);
-
+    //var distanceInMeters = this.getDistanceBetweenPoints(current_pos_marker.lat, current_pos_marker.lng, next_stop_pos_marker.lat, next_stop_pos_marker.lng);
+    //console.log('distanceInMeters', distanceInMeters)
     this.distanceService.getDistanceMatrix({
       origins: [current_pos_marker],
       destinations: [next_stop_pos_marker],
@@ -579,8 +580,8 @@ export class LocationTrackingPage implements OnInit {
         record['next_stoppage_cordinates'] = next_stop_pos_marker;
         record['next_stoppage_name'] = that.next_stoppage_info.location_name; //////car name
         record['distance'] = driver_distance_from_next_stoppage;
-        record['time']=((date.getHours()) * 100) + date.getMinutes();
-        record['date']=date.getDate() + '/' + date.getMonth() + '/'+ date.getFullYear();
+        record['time'] = ((date.getHours()) * 100) + date.getMinutes();
+        record['date'] = date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
         //alert(fire_base_car_id);
         that.afs.collection('debugger').snapshotChanges().subscribe(data => {
           //this.driver_curent_live_location = 
@@ -624,25 +625,25 @@ export class LocationTrackingPage implements OnInit {
           that.next_stoppage_list_array.shift();
           that.next_stoppage_info = that.next_stoppage_list_array[0];
 
-          let record1={};
-          record1['next_stoppage_list_array']=that.next_stoppage_list_array;
+          let record1 = {};
+          record1['next_stoppage_list_array'] = that.next_stoppage_list_array;
 
           that.afs.collection('next_stoppage').snapshotChanges().subscribe(data => {
             //this.driver_curent_live_location = 
             data.map(e => {
               if (e.payload.doc.id == fire_base_car_id) {
-  
+
                 next_stoppage_already_exist_firebase = true;
                 //console.log("firebase data",e.payload.doc);
               }
             })
           });
           if (next_stoppage_already_exist_firebase == true) {
-  
+
             that.afs.collection('next_stoppage').doc(fire_base_car_id).update(record1);
-  
+
           } else {
-  
+
             that.afs.collection('next_stoppage').doc(fire_base_car_id).set(record1); //////car id
           }
 
@@ -653,6 +654,33 @@ export class LocationTrackingPage implements OnInit {
       }
     });
   }
+  degreesToRadians(degrees) {
+    var pi = Math.PI;
+    return degrees * (pi / 180);
+  }
+  getDistanceBetweenPoints(lat1, lng1, lat2, lng2) {
+    // The radius of the planet earth in meters
+    let R = 6378137;
+    let dLat = this.degreesToRadians(lat2 - lat1);
+    let dLong = this.degreesToRadians(lng2 - lng1);
+    let a = Math.sin(dLat / 2)
+      *
+      Math.sin(dLat / 2)
+      +
+      Math.cos(this.degreesToRadians(lat1))
+      *
+      Math.cos(this.degreesToRadians(lat1))
+      *
+      Math.sin(dLong / 2)
+      *
+      Math.sin(dLong / 2);
+
+    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    let distance = R * c;
+
+    return distance;
+  }
+
 
   update_driver_cordinated_to_firebase() {
 
@@ -663,8 +691,8 @@ export class LocationTrackingPage implements OnInit {
     record['lat'] = this.driver_current_lat;
     record['long'] = this.driver_current_lng;
     record['name'] = 'test1.03.2020'; ///////car name optional
-    record['time']=((date.getHours()) * 100) + date.getMinutes();
-    record['date']=date.getDate() + '/' + date.getMonth() + '/'+ date.getFullYear();
+    record['time'] = ((date.getHours()) * 100) + date.getMinutes();
+    record['date'] = date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
     let car_id = this.car_type + "-" + this.car_id; ///////car id required
     this.afs.collection('locations').doc(car_id).update(record);
   }
@@ -710,7 +738,7 @@ export class LocationTrackingPage implements OnInit {
           if (that.driver_distance_from_starting_point <= 200) {
 
             that.isTracking = false;
-            that.isTracking_resume=false;
+            that.isTracking_resume = false;
 
             that.backgroundGeolocation.stop();
             that.watch.unsubscribe();
@@ -852,4 +880,5 @@ export class LocationTrackingPage implements OnInit {
     }
     this.modalService.openModal(RouteStoppageModalPage, data, 'passenger_modal_css');
   }
+
 }
