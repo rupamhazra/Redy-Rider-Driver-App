@@ -396,7 +396,14 @@ export class LocationTrackingPage implements OnInit {
         } else {
           that.driver_distance_from_starting_point = parseFloat(response.rows[0].elements[0].distance.text); //driver distance from ride starting point
 
-          if (that.driver_distance_from_starting_point <= 2000) { //// should be 2
+          let driver_distance_from_next_stoppage = response.rows[0].elements[0].distance.text.split(" ");
+          var distance_checker;
+          if (driver_distance_from_next_stoppage[1] == 'km') {
+            distance_checker = 200;
+          } else {
+            distance_checker = 20000;
+          }
+          if (that.driver_distance_from_starting_point <= distance_checker) { //// should be 2
             this.back_button_visible = false;
 
             let date = new Date();
