@@ -51,6 +51,7 @@ export class LocationTrackingPage implements OnInit {
   car_icon;
   ride_end;
   isTracking_resume = false;
+  first_timeopen=true;
 
 
   directionsService = new google.maps.DirectionsService;
@@ -189,19 +190,23 @@ export class LocationTrackingPage implements OnInit {
         this.ride_startTime = parseFloat(element.result.start_end_time.start_time);
         this.ride_endTime = parseFloat(element.result.start_end_time.end_time);
 
-        let car_id = this.car_type + "-" + this.car_id;////// for checking resume
-        //console.log(car_id);
-        //alert(car_id);
-        this.afs.collection('locations').snapshotChanges().subscribe(data => {
-          //this.driver_curent_live_location = 
-          data.map(e => {
-            if (e.payload.doc.id == car_id) {
-              //alert(1);
-              this.isTracking_resume = true;
-              console.log("isTracking_resume");
-            }
-          })
-        });
+        if(this.first_timeopen==true){
+          let car_id = this.car_type + "-" + this.car_id;////// for checking resume
+          console.log('this.first_timeopen');
+          //alert(car_id);
+          this.afs.collection('locations').snapshotChanges().subscribe(data => {
+            //this.driver_curent_live_location = 
+            data.map(e => {
+              if (e.payload.doc.id == car_id) {
+                //alert(1);
+                this.isTracking_resume = true;
+                console.log("isTracking_resume");
+              }
+            })
+          });
+          this.first_timeopen=false
+        }
+        
 
 
       },
@@ -220,7 +225,7 @@ export class LocationTrackingPage implements OnInit {
     const config: BackgroundGeolocationConfig = {
       desiredAccuracy: 10,
       stationaryRadius: 20,
-      interval: 2000,
+      interval: 5000,
       distanceFilter: 30,
       debug: true, //  enable this hear sounds for background-geolocation life-cycle.
       stopOnTerminate: false, // enable this to clear background location settings when the app terminates
@@ -474,7 +479,7 @@ export class LocationTrackingPage implements OnInit {
 
     this.backgroundGeolocation.start();
     let options = {
-      timeout: 3000,
+      timeout: 5000,
       enableHighAccuracy: true
     };
     let point_nember = 1;
