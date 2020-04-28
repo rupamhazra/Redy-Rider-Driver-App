@@ -112,7 +112,7 @@ export class HomePage implements OnInit {
     let request_data = { "type": "first_drive", "user_id": this.userId };
     this.officePoolCarService.todayRidesService(request_data).subscribe(
       res => {
-        //console.log(res);
+        console.log(res);
         this.car_details_d = res.result;
         //this.storage.set('car_details', res.result);
         this.progress_bar = false;

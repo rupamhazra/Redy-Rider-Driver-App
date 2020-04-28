@@ -51,7 +51,7 @@ export class LocationTrackingPage implements OnInit {
   car_icon;
   ride_end;
   isTracking_resume = false;
-  first_timeopen=true;
+  
 
 
   directionsService = new google.maps.DirectionsService;
@@ -115,7 +115,7 @@ export class LocationTrackingPage implements OnInit {
 
   ) {
 
-    console.log('constructor')
+    //console.log('constructor')
     this.car_id = this.route.snapshot.params['car_id'];
     this.driver_id = this.route.snapshot.params['driver_id'];
     this.route_timing_id = this.route.snapshot.params['route_timing_id'];
@@ -190,23 +190,11 @@ export class LocationTrackingPage implements OnInit {
         this.ride_startTime = parseFloat(element.result.start_end_time.start_time);
         this.ride_endTime = parseFloat(element.result.start_end_time.end_time);
 
-        if(this.first_timeopen==true){
-          let car_id = this.car_type + "-" + this.car_id;////// for checking resume
-          console.log('this.first_timeopen');
-          //alert(car_id);
-          this.afs.collection('locations').snapshotChanges().subscribe(data => {
-            //this.driver_curent_live_location = 
-            data.map(e => {
-              if (e.payload.doc.id == car_id) {
-                //alert(1);
-                this.isTracking_resume = true;
-                console.log("isTracking_resume");
-              }
-            })
-          });
-          this.first_timeopen=false
+       
+        if(element.drive_status==1){
+          this.isTracking_resume = true;
+          
         }
-        
 
 
       },
@@ -775,7 +763,7 @@ export class LocationTrackingPage implements OnInit {
       "car_id": this.car_id,
       "driver_id": this.driver_id
     };
-    console.log('request_data', request_data)
+    //console.log('request_data', request_data)
     this.officePoolCarService.todayRidesService(request_data).subscribe(
       res => {
         //this.result_data = res.result;
