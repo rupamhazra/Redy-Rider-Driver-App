@@ -181,10 +181,10 @@ export class LocationTrackingPage implements OnInit {
         this.route_end_point = element.result.end_point_id;
         this.route_start_point = element.result.start_point_id;
         //this.loadMap({ lat: parseFloat(element.result.start_lat), lng: parseFloat(element.result.start_long) },
-         // { lat: parseFloat(element.result.end_lat), lng: parseFloat(element.result.end_long) });
-       
-        this.location_source={ lat: parseFloat(element.result.start_lat), lng: parseFloat(element.result.start_long) };
-        this.location_destination={lat: parseFloat(element.result.end_lat), lng: parseFloat(element.result.end_long) };
+        // { lat: parseFloat(element.result.end_lat), lng: parseFloat(element.result.end_long) });
+
+        this.location_source = { lat: parseFloat(element.result.start_lat), lng: parseFloat(element.result.start_long) };
+        this.location_destination = { lat: parseFloat(element.result.end_lat), lng: parseFloat(element.result.end_long) };
         element.result.stoppage_list_1.forEach(element => {
           let waypoint_location;
           waypoint_location = {
@@ -253,36 +253,36 @@ export class LocationTrackingPage implements OnInit {
 
   }
   loadMap() {
+    this.map = new google.maps.Map(this.mapElement.nativeElement, {
+      center: { lat: -34.9011, lng: -56.1645 },
+      zoom: 18,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      disableDefaultUI: true,
+    });
     this.geolocation.getCurrentPosition().then(resp => {
       //console.log('resp', resp)
       let pos = {
         lat: resp.coords.latitude,
         lng: resp.coords.longitude
       };
-      this.map = new google.maps.Map(this.mapElement.nativeElement, {
-        center: pos,
-        zoom: 17,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        disableDefaultUI: true,
-      });
-
       this.driver_marker = new google.maps.Marker({
         position: pos,
         map: this.map,
         icon: "http://tobuekalabya.com/carservice_manage/icon/car_top.png",
-        title: 'you are here!',
-        zoom: 17
+        title: 'you are here!'
       });
+      this.map.setCenter(pos);
+      this.map.setZoom(18);
 
-      this.calculateAndDisplayRoute();
+      
 
     }).catch((error) => {
       console.log('Error getting location', error);
     });
-    
+
     console.log('start_loc', this.start_location);
-   
-    
+
+    this.calculateAndDisplayRoute();
   }
 
   calculateAndDisplayRoute() {
@@ -609,114 +609,168 @@ export class LocationTrackingPage implements OnInit {
 
     console.log('current loaction stoppage : ', current_pos_marker);
     console.log('next loaction stoppage : ', next_stop_pos_marker);
-    // var distanceInMeters = this.getDistanceBetweenPoints(current_pos_marker.lat, current_pos_marker.lng, next_stop_pos_marker.lat, next_stop_pos_marker.lng);
-    // console.log('distanceInMeters', distanceInMeters)
-    this.distanceService.getDistanceMatrix({
-      origins: [current_pos_marker],
-      destinations: [next_stop_pos_marker],
-      travelMode: 'DRIVING',
-      unitSystem: google.maps.UnitSystem.METRIC,
-      avoidHighways: false,
-      avoidTolls: false
-    }, function (response, status) {
-      if (status !== 'OK') {
-        alert('next stoppage distance matrix Error was: ' + status);
-      } else {
+     var distanceInMeters = this.getDistanceBetweenPoints(current_pos_marker.lat, current_pos_marker.lng, next_stop_pos_marker.lat, next_stop_pos_marker.lng);
+     console.log('distanceInMeters', distanceInMeters);
 
-        console.log("response ::::::::", response)
-        // var originList = response.originAddresses;
-        // var destinationList = response.destinationAddresses;
+     let date = new Date();
 
-        // var get_distance=response.rows[0].elements;
-        let driver_distance_from_next_destination = parseFloat(response.rows[0].elements[0].distance.text);
-        let driver_distance_from_next_destination_response = response;
-        //console.log('response_distance : ', driver_distance_from_next_destination_response);
-
-        let driver_distance_from_next_stoppage = response.rows[0].elements[0].distance.text.split(" ");
-        //console.log('distance : ', driver_distance_from_next_stoppage);
-
-        let date = new Date();
-
-        let fire_base_car_id = that.car_type + "-" + that.car_id;
-        let record = {};
-        var debugger_already_exist_firebase;
-        record['current_cordinates'] = current_pos_marker;
-        record['next_stoppage_cordinates'] = next_stop_pos_marker;
-        record['next_stoppage_name'] = that.next_stoppage_info.location_name; //////car name
-        record['distance'] = driver_distance_from_next_stoppage;
-        record['time'] = ((date.getHours()) * 100) + date.getMinutes();
-        record['date'] = date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
-        //alert(fire_base_car_id);
-        that.afs.collection('debugger').snapshotChanges().subscribe(data => {
-          //this.driver_curent_live_location = 
-          data.map(e => {
-            if (e.payload.doc.id == fire_base_car_id) {
-
-              debugger_already_exist_firebase = true;
-              //console.log("firebase data",e.payload.doc);
-            }
-          })
-        });
-        if (debugger_already_exist_firebase == true) {
-
-          that.afs.collection('debugger').doc(fire_base_car_id).update(record);
-
-        } else {
-
-          that.afs.collection('debugger').doc(fire_base_car_id).set(record); //////car id
-        }
+         let fire_base_car_id = that.car_type + "-" + that.car_id;
+         let record = {};
+         var debugger_already_exist_firebase;
+         record['current_cordinates'] = current_pos_marker;
+         record['next_stoppage_cordinates'] = next_stop_pos_marker;
+         record['next_stoppage_name'] = that.next_stoppage_info.location_name; //////car name
+         record['distance'] = distanceInMeters;
+         record['time'] = ((date.getHours()) * 100) + date.getMinutes();
+         record['date'] = date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
+         //alert(fire_base_car_id);
+         that.afs.collection('debugger').snapshotChanges().subscribe(data => {
+           //this.driver_curent_live_location = 
+           data.map(e => {
+             if (e.payload.doc.id == fire_base_car_id) {
+ 
+               debugger_already_exist_firebase = true;
+               //console.log("firebase data",e.payload.doc);
+             }
+           })
+         });
+         if (debugger_already_exist_firebase == true) {
+ 
+           that.afs.collection('debugger').doc(fire_base_car_id).update(record);
+ 
+         } else {
+ 
+           that.afs.collection('debugger').doc(fire_base_car_id).set(record); //////car id
+         }
+ 
 
 
 
-
-        var distance_checker;
-        if (driver_distance_from_next_stoppage[1] == 'km') {
-          distance_checker = 0.1;
-        } else {
-          distance_checker = 99;
-        }
-
-        console.log("driver_distance_from_next_destination", driver_distance_from_next_destination);
-        if (driver_distance_from_next_destination <= distance_checker) {
-          reached_stoppage = true;
-          if (that.next_stoppage_list_array[0].stop == true) {
-            that.afs.collection('stoppage').doc(fire_base_car_id).set(record);
-            alert('Route Journey completed!');
-            that.ride_end = true;
-            that.next_stoppage_info = false;
-          }
-          that.previous_stoppage_list_array.push(that.next_stoppage_list_array[0]);
-          that.next_stoppage_list_array.shift();
-          that.next_stoppage_info = that.next_stoppage_list_array[0];
-
-          let record1 = {};
-          record1['next_stoppage_list_array'] = that.next_stoppage_list_array;
-
-          that.afs.collection('next_stoppage').snapshotChanges().subscribe(data => {
-            //this.driver_curent_live_location = 
-            data.map(e => {
-              if (e.payload.doc.id == fire_base_car_id) {
-
-                next_stoppage_already_exist_firebase = true;
-                //console.log("firebase data",e.payload.doc);
-              }
-            })
-          });
-          if (next_stoppage_already_exist_firebase == true) {
-
-            that.afs.collection('next_stoppage').doc(fire_base_car_id).update(record1);
-
-          } else {
-
-            that.afs.collection('next_stoppage').doc(fire_base_car_id).set(record1); //////car id
-          }
-
-
-
-          that.myStepper.next();
-        }
+     if (distanceInMeters <= 200) {
+      reached_stoppage = true;
+      if (that.next_stoppage_list_array[0].stop == true) {
+       
+        alert('Route Journey completed!');
+        that.ride_end = true;
+        that.next_stoppage_info = false;
       }
-    });
+      that.previous_stoppage_list_array.push(that.next_stoppage_list_array[0]);
+      that.next_stoppage_list_array.shift();
+      that.next_stoppage_info = that.next_stoppage_list_array[0];
+    }
+
+
+
+
+
+
+
+    // this.distanceService.getDistanceMatrix({
+    //   origins: [current_pos_marker],
+    //   destinations: [next_stop_pos_marker],
+    //   travelMode: 'DRIVING',
+    //   unitSystem: google.maps.UnitSystem.METRIC,
+    //   avoidHighways: false,
+    //   avoidTolls: false
+    // }, function (response, status) {
+    //   if (status !== 'OK') {
+    //     alert('next stoppage distance matrix Error was: ' + status);
+    //   } else {
+
+    //     console.log("response ::::::::", response)
+    //     // var originList = response.originAddresses;
+    //     // var destinationList = response.destinationAddresses;
+
+    //     // var get_distance=response.rows[0].elements;
+    //     let driver_distance_from_next_destination = parseFloat(response.rows[0].elements[0].distance.text);
+    //     let driver_distance_from_next_destination_response = response;
+    //     //console.log('response_distance : ', driver_distance_from_next_destination_response);
+
+    //     let driver_distance_from_next_stoppage = response.rows[0].elements[0].distance.text.split(" ");
+    //     //console.log('distance : ', driver_distance_from_next_stoppage);
+
+    //     let date = new Date();
+
+    //     let fire_base_car_id = that.car_type + "-" + that.car_id;
+    //     let record = {};
+    //     var debugger_already_exist_firebase;
+    //     record['current_cordinates'] = current_pos_marker;
+    //     record['next_stoppage_cordinates'] = next_stop_pos_marker;
+    //     record['next_stoppage_name'] = that.next_stoppage_info.location_name; //////car name
+    //     record['distance'] = driver_distance_from_next_stoppage;
+    //     record['time'] = ((date.getHours()) * 100) + date.getMinutes();
+    //     record['date'] = date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
+    //     //alert(fire_base_car_id);
+    //     that.afs.collection('debugger').snapshotChanges().subscribe(data => {
+    //       //this.driver_curent_live_location = 
+    //       data.map(e => {
+    //         if (e.payload.doc.id == fire_base_car_id) {
+
+    //           debugger_already_exist_firebase = true;
+    //           //console.log("firebase data",e.payload.doc);
+    //         }
+    //       })
+    //     });
+    //     if (debugger_already_exist_firebase == true) {
+
+    //       that.afs.collection('debugger').doc(fire_base_car_id).update(record);
+
+    //     } else {
+
+    //       that.afs.collection('debugger').doc(fire_base_car_id).set(record); //////car id
+    //     }
+
+
+
+
+    //     var distance_checker;
+    //     if (driver_distance_from_next_stoppage[1] == 'km') {
+    //       distance_checker = 0.1;
+    //     } else {
+    //       distance_checker = 99;
+    //     }
+
+        //console.log("driver_distance_from_next_destination", driver_distance_from_next_destination);
+        // if (driver_distance_from_next_destination <= distance_checker) {
+        //   reached_stoppage = true;
+        //   if (that.next_stoppage_list_array[0].stop == true) {
+        //     that.afs.collection('stoppage').doc(fire_base_car_id).set(record);
+        //     alert('Route Journey completed!');
+        //     that.ride_end = true;
+        //     that.next_stoppage_info = false;
+        //   }
+        //   that.previous_stoppage_list_array.push(that.next_stoppage_list_array[0]);
+        //   that.next_stoppage_list_array.shift();
+        //   that.next_stoppage_info = that.next_stoppage_list_array[0];
+
+    //       let record1 = {};
+    //       record1['next_stoppage_list_array'] = that.next_stoppage_list_array;
+
+    //       that.afs.collection('next_stoppage').snapshotChanges().subscribe(data => {
+    //         //this.driver_curent_live_location = 
+    //         data.map(e => {
+    //           if (e.payload.doc.id == fire_base_car_id) {
+
+    //             next_stoppage_already_exist_firebase = true;
+    //             //console.log("firebase data",e.payload.doc);
+    //           }
+    //         })
+    //       });
+    //       if (next_stoppage_already_exist_firebase == true) {
+
+    //         that.afs.collection('next_stoppage').doc(fire_base_car_id).update(record1);
+
+    //       } else {
+
+    //         that.afs.collection('next_stoppage').doc(fire_base_car_id).set(record1); //////car id
+    //       }
+
+
+
+    //       that.myStepper.next();
+    //     }
+    //   }
+    // });
   }
   degreesToRadians(degrees) {
     var pi = Math.PI;
