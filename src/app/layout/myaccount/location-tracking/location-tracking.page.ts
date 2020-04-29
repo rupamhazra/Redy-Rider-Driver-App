@@ -274,13 +274,15 @@ export class LocationTrackingPage implements OnInit {
         zoom: 17
       });
 
+      this.calculateAndDisplayRoute();
+
     }).catch((error) => {
       console.log('Error getting location', error);
     });
     
     console.log('start_loc', this.start_location);
    
-    this.calculateAndDisplayRoute();
+    
   }
 
   calculateAndDisplayRoute() {
