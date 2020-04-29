@@ -444,7 +444,7 @@ export class LocationTrackingPage implements OnInit {
         avoidTolls: false
       }, function (response, status) {
         if (status !== 'OK') {
-          alert('Error was: ' + status);
+          alert('Start distance matrix Error was: ' + status);
         } else {
           that.driver_distance_from_starting_point = parseFloat(response.rows[0].elements[0].distance.text); //driver distance from ride starting point
 
@@ -616,7 +616,7 @@ export class LocationTrackingPage implements OnInit {
       avoidTolls: false
     }, function (response, status) {
       if (status !== 'OK') {
-        alert('Error was: ' + status);
+        alert('next stoppage distance matrix Error was: ' + status);
       } else {
 
         console.log("response ::::::::", response)
@@ -782,7 +782,7 @@ export class LocationTrackingPage implements OnInit {
         avoidTolls: false
       }, function (response, status) {
         if (status !== 'OK') {
-          alert('Error was: ' + status);
+          alert(' stoppage distance matrix Error was: ' + status);
         } else {
 
           // var originList = response.originAddresses;
