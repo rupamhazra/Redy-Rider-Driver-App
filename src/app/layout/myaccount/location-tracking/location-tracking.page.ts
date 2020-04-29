@@ -181,10 +181,10 @@ export class LocationTrackingPage implements OnInit {
         this.route_end_point = element.result.end_point_id;
         this.route_start_point = element.result.start_point_id;
         //this.loadMap({ lat: parseFloat(element.result.start_lat), lng: parseFloat(element.result.start_long) },
-         // { lat: parseFloat(element.result.end_lat), lng: parseFloat(element.result.end_long) });
-       
-        this.location_source={ lat: parseFloat(element.result.start_lat), lng: parseFloat(element.result.start_long) };
-        this.location_destination={lat: parseFloat(element.result.end_lat), lng: parseFloat(element.result.end_long) };
+        // { lat: parseFloat(element.result.end_lat), lng: parseFloat(element.result.end_long) });
+
+        this.location_source = { lat: parseFloat(element.result.start_lat), lng: parseFloat(element.result.start_long) };
+        this.location_destination = { lat: parseFloat(element.result.end_lat), lng: parseFloat(element.result.end_long) };
         element.result.stoppage_list_1.forEach(element => {
           let waypoint_location;
           waypoint_location = {
@@ -253,33 +253,33 @@ export class LocationTrackingPage implements OnInit {
 
   }
   loadMap() {
+    this.map = new google.maps.Map(this.mapElement.nativeElement, {
+      center: { lat: -34.9011, lng: -56.1645 },
+      zoom: 18,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      disableDefaultUI: true,
+    });
     this.geolocation.getCurrentPosition().then(resp => {
       //console.log('resp', resp)
       let pos = {
         lat: resp.coords.latitude,
         lng: resp.coords.longitude
       };
-      this.map = new google.maps.Map(this.mapElement.nativeElement, {
-        center: pos,
-        zoom: 17,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        disableDefaultUI: true,
-      });
-
       this.driver_marker = new google.maps.Marker({
         position: pos,
         map: this.map,
         icon: "http://tobuekalabya.com/carservice_manage/icon/car_top.png",
-        title: 'you are here!',
-        zoom: 17
+        title: 'you are here!'
       });
+      this.map.setCenter(pos);
+      this.map.setZoom(18);
 
     }).catch((error) => {
       console.log('Error getting location', error);
     });
-    
+
     console.log('start_loc', this.start_location);
-   
+
     this.calculateAndDisplayRoute();
   }
 
