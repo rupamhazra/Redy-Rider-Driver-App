@@ -250,16 +250,16 @@ export class LocationTrackingPage implements OnInit {
 
   }
   loadMap(location_source, location_destination) {
-    this.map = new google.maps.Map(this.mapElement.nativeElement, {
-      center: { lat: -34.9011, lng: -56.1645 },
-      zoom: 18,
-      mapTypeId: google.maps.MapTypeId.ROADMAP,
-      // mapTypeControl: true,
-      // streetViewControl: true,
-      // fullscreenControl: true
-      disableDefaultUI: true,
-      tilt: 45,
-    });
+    // this.map = new google.maps.Map(this.mapElement.nativeElement, {
+    //   center: { lat: -34.9011, lng: -56.1645 },
+    //   zoom: 12,
+    //   mapTypeId: google.maps.MapTypeId.ROADMAP,
+    //   // mapTypeControl: true,
+    //   // streetViewControl: true,
+    //   // fullscreenControl: true
+    //   disableDefaultUI: true,
+    //   tilt: 45,
+    // });
     //var image = '/assets/svg/sos.svg'
     this.geolocation.getCurrentPosition().then(resp => {
       //console.log('resp', resp)
@@ -267,18 +267,27 @@ export class LocationTrackingPage implements OnInit {
         lat: resp.coords.latitude,
         lng: resp.coords.longitude
       };
+
+      this.map = new google.maps.Map(this.mapElement.nativeElement, {
+        center: pos,
+        zoom: 17,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        disableDefaultUI: true,
+        // tilt: 45,
+      });
+
       this.driver_marker = new google.maps.Marker({
         position: pos,
         map: this.map,
         icon: "http://tobuekalabya.com/carservice_manage/icon/car_top.png",
-        //icon: "http://tobuekalabya.com/carservice_manage/icon/icon_map_baloon.png",
         title: 'you are here!',
+        zoom: 17
         //animation: google.maps.Animation.DROP,
       });
       //marker.setAnimation(google.maps.Animation.BOUNCE);
       //this.markers.push(marker);
-      this.map.setCenter(pos);
-      this.map.setZoom(18);
+      //this.map.setCenter(pos);
+      //this.map.setZoom(12);
 
     }).catch((error) => {
       console.log('Error getting location', error);
