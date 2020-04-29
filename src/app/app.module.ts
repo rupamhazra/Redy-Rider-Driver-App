@@ -42,6 +42,8 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { IonicSelectableModule } from 'ionic-selectable';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { Insomnia } from '@ionic-native/insomnia/ngx';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -63,6 +65,7 @@ import { Insomnia } from '@ionic-native/insomnia/ngx';
     IonicSelectableModule
   ],
   providers: [
+    AndroidPermissions,
     StatusBar,
     SplashScreen,
     AuthGuardService,
@@ -85,7 +88,8 @@ import { Insomnia } from '@ionic-native/insomnia/ngx';
     EmailComposer,
     BarcodeScanner,
     FileTransfer,
-    Insomnia
+    Insomnia,
+    LocationAccuracy
 
   ],
   bootstrap: [AppComponent],

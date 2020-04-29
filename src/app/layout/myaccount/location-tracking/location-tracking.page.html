@@ -41,7 +41,8 @@
         
         
         <div *ngIf="next_stoppage_info">
-          Boardings <mat-icon matBadge="{{next_stoppage_info.total_passenger}}" matBadgeColor="primary" *ngIf="next_stoppage_info" class="boarding-badge"></mat-icon>
+          Boardings <mat-icon matBadge="{{next_stoppage_info.total_passenger}}" matBadgeColor="primary" *ngIf="next_stoppage_info" class="boarding-badge"></mat-icon>&nbsp;&nbsp;&nbsp;
+          Drops <mat-icon matBadge="{{next_stoppage_info.total_passenger_down}}" matBadgeColor="warn" *ngIf="next_stoppage_info" class="boarding-badge"></mat-icon>
         </div>
 
         <div *ngIf="!next_stoppage_info">
@@ -89,7 +90,7 @@
 <ion-footer class="footer-bus-route-details" *ngIf="!progress_bar">
   <ion-grid no-margin no-paading>
     <ion-row text-center no-margin>
-      <ion-col no-margin style="font-size: 20px;" (click)="startTracking()" *ngIf="!isTracking && !isTracking_resume">
+      <ion-col no-margin style="font-size: 20px;" (click)="checkGPSPermission()" *ngIf="!isTracking && !isTracking_resume">
         <fa-icon [icon]="['fas','play-circle']" size="1x" class="rstar-icon"></fa-icon>
         START 
       </ion-col>
@@ -101,7 +102,7 @@
       </ion-col>
     </ion-row>
     <ion-row text-center no-margin>
-      <ion-col no-margin style="font-size: 20px;" (click)="startTracking()" *ngIf="isTracking_resume">
+      <ion-col no-margin style="font-size: 20px;" (click)="checkGPSPermission()" *ngIf="isTracking_resume">
         <fa-icon [icon]="['fas','play-circle']" size="1x" class="rstar-icon"></fa-icon>
         Resume 
       </ion-col>
