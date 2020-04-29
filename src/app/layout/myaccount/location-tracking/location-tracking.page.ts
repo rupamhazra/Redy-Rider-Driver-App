@@ -250,30 +250,17 @@ export class LocationTrackingPage implements OnInit {
 
   }
   loadMap(location_source, location_destination) {
-    // this.map = new google.maps.Map(this.mapElement.nativeElement, {
-    //   center: { lat: -34.9011, lng: -56.1645 },
-    //   zoom: 12,
-    //   mapTypeId: google.maps.MapTypeId.ROADMAP,
-    //   // mapTypeControl: true,
-    //   // streetViewControl: true,
-    //   // fullscreenControl: true
-    //   disableDefaultUI: true,
-    //   tilt: 45,
-    // });
-    //var image = '/assets/svg/sos.svg'
     this.geolocation.getCurrentPosition().then(resp => {
       //console.log('resp', resp)
       let pos = {
         lat: resp.coords.latitude,
         lng: resp.coords.longitude
       };
-
       this.map = new google.maps.Map(this.mapElement.nativeElement, {
         center: pos,
         zoom: 17,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         disableDefaultUI: true,
-        // tilt: 45,
       });
 
       this.driver_marker = new google.maps.Marker({
@@ -282,12 +269,7 @@ export class LocationTrackingPage implements OnInit {
         icon: "http://tobuekalabya.com/carservice_manage/icon/car_top.png",
         title: 'you are here!',
         zoom: 17
-        //animation: google.maps.Animation.DROP,
       });
-      //marker.setAnimation(google.maps.Animation.BOUNCE);
-      //this.markers.push(marker);
-      //this.map.setCenter(pos);
-      //this.map.setZoom(12);
 
     }).catch((error) => {
       console.log('Error getting location', error);
@@ -365,22 +347,29 @@ export class LocationTrackingPage implements OnInit {
   }
   //Check if application having GPS access permission  
   checkGPSPermission() {
-    this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(
-      result => {
-        if (result.hasPermission) {
+    this.plt.ready().then(() => {
+      if (this.plt.is('cordova')) {
+        this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(
+          result => {
+            if (result.hasPermission) {
 
-          //If having permission show 'Turn On GPS' dialogue
-          this.askToTurnOnGPS();
-        } else {
+              //If having permission show 'Turn On GPS' dialogue
+              this.askToTurnOnGPS();
+            } else {
 
-          //If not having permission ask for permission
-          this.requestGPSPermission();
-        }
-      },
-      err => {
-        alert(err);
+              //If not having permission ask for permission
+              this.requestGPSPermission();
+            }
+          },
+          err => {
+            alert(err);
+          }
+        );
+      } else {
+        this.startTracking();
       }
-    );
+    });
+
   }
   requestGPSPermission() {
     this.locationAccuracy.canRequest().then((canRequest: boolean) => {
@@ -401,6 +390,7 @@ export class LocationTrackingPage implements OnInit {
           );
       }
     });
+
   }
   askToTurnOnGPS() {
     this.locationAccuracy.request(this.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY).then(
@@ -614,8 +604,8 @@ export class LocationTrackingPage implements OnInit {
 
     console.log('current loaction stoppage : ', current_pos_marker);
     console.log('next loaction stoppage : ', next_stop_pos_marker);
-    //var distanceInMeters = this.getDistanceBetweenPoints(current_pos_marker.lat, current_pos_marker.lng, next_stop_pos_marker.lat, next_stop_pos_marker.lng);
-    //console.log('distanceInMeters', distanceInMeters)
+    // var distanceInMeters = this.getDistanceBetweenPoints(current_pos_marker.lat, current_pos_marker.lng, next_stop_pos_marker.lat, next_stop_pos_marker.lng);
+    // console.log('distanceInMeters', distanceInMeters)
     this.distanceService.getDistanceMatrix({
       origins: [current_pos_marker],
       destinations: [next_stop_pos_marker],
