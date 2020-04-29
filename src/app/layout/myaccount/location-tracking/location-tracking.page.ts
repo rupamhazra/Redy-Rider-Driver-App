@@ -180,8 +180,11 @@ export class LocationTrackingPage implements OnInit {
         this.car_type = element.result.car_type;
         this.route_end_point = element.result.end_point_id;
         this.route_start_point = element.result.start_point_id;
-        this.loadMap({ lat: parseFloat(element.result.start_lat), lng: parseFloat(element.result.start_long) },
-          { lat: parseFloat(element.result.end_lat), lng: parseFloat(element.result.end_long) });
+        //this.loadMap({ lat: parseFloat(element.result.start_lat), lng: parseFloat(element.result.start_long) },
+         // { lat: parseFloat(element.result.end_lat), lng: parseFloat(element.result.end_long) });
+       
+        this.location_source={ lat: parseFloat(element.result.start_lat), lng: parseFloat(element.result.start_long) };
+        this.location_destination={lat: parseFloat(element.result.end_lat), lng: parseFloat(element.result.end_long) };
         element.result.stoppage_list_1.forEach(element => {
           let waypoint_location;
           waypoint_location = {
@@ -193,7 +196,7 @@ export class LocationTrackingPage implements OnInit {
         });
         this.ride_startTime = parseFloat(element.result.start_end_time.start_time);
         this.ride_endTime = parseFloat(element.result.start_end_time.end_time);
-
+        this.loadMap();
         console.log('element:', element.result.drive_status);
         if (element.result.drive_status == '1') {
           this.isTracking_resume = true;
@@ -249,7 +252,7 @@ export class LocationTrackingPage implements OnInit {
     //this.loadMap();
 
   }
-  loadMap(location_source, location_destination) {
+  loadMap() {
     this.geolocation.getCurrentPosition().then(resp => {
       //console.log('resp', resp)
       let pos = {
@@ -274,17 +277,17 @@ export class LocationTrackingPage implements OnInit {
     }).catch((error) => {
       console.log('Error getting location', error);
     });
-    this.directionsDisplay.setMap(this.map);
+    
     console.log('start_loc', this.start_location);
-    this.location_source = location_source;
-    this.location_destination = location_destination;
+   
     this.calculateAndDisplayRoute();
   }
 
   calculateAndDisplayRoute() {
     const that = this;
 
-    //console.log(this.DirectionsWaypoint);
+    console.log(this.location_source);
+    console.log(this.location_destination);
     this.directionsService.route({
       origin: this.location_source, //origin 
       destination: this.location_destination, //destination
@@ -295,7 +298,7 @@ export class LocationTrackingPage implements OnInit {
       if (status === 'OK') {
         console.log(response);
         that.directionsDisplay.setDirections(response);
-        that.directionsDisplay.setMap(that.map);
+        this.directionsDisplay.setMap(this.map);
         that.stoppage_list.forEach(element => {
           let waypoint_location_marker;
           let pos_marker = {
@@ -315,7 +318,6 @@ export class LocationTrackingPage implements OnInit {
             //animation: google.maps.Animation.DROP,
           });
         });
-
 
       } else {
         window.alert('Directions request failed due to ' + status);
