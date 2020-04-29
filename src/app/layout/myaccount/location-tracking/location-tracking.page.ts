@@ -590,15 +590,15 @@ export class LocationTrackingPage implements OnInit {
 
     var next_stoppage_already_exist_firebase;
 
-    let current_pos_marker = new google.maps.LatLng(this.driver_current_lat, this.driver_current_lng);
-    let current_pos_marker1 = {
+    //let current_pos_marker = new google.maps.LatLng(this.driver_current_lat, this.driver_current_lng);
+    let current_pos_marker = {
       lat: parseFloat(this.driver_current_lat),
       lng: parseFloat(this.driver_current_lng)
     };
 
 
-    let next_stop_pos_marker = new google.maps.LatLng(parseFloat(that.next_stoppage_list_array[0].lat), parseFloat(that.next_stoppage_list_array[0].lng));
-    let next_stop_pos_marker1 = {
+    //let next_stop_pos_marker = new google.maps.LatLng(parseFloat(that.next_stoppage_list_array[0].lat), parseFloat(that.next_stoppage_list_array[0].lng));
+    let next_stop_pos_marker = {
       lat: parseFloat(that.next_stoppage_list_array[0].lat),
       lng: parseFloat(that.next_stoppage_list_array[0].lng)
     };
