@@ -604,8 +604,8 @@ export class LocationTrackingPage implements OnInit {
 
     console.log('current loaction stoppage : ', current_pos_marker);
     console.log('next loaction stoppage : ', next_stop_pos_marker);
-    // var distanceInMeters = this.getDistanceBetweenPoints(current_pos_marker.lat, current_pos_marker.lng, next_stop_pos_marker.lat, next_stop_pos_marker.lng);
-    // console.log('distanceInMeters', distanceInMeters)
+    var distanceInMeters = this.getDistanceBetweenPoints(current_pos_marker.lat, current_pos_marker.lng, next_stop_pos_marker.lat, next_stop_pos_marker.lng);
+    console.log('distanceInMeters', distanceInMeters)
     this.distanceService.getDistanceMatrix({
       origins: [current_pos_marker],
       destinations: [next_stop_pos_marker],
@@ -719,6 +719,7 @@ export class LocationTrackingPage implements OnInit {
   }
   getDistanceBetweenPoints(lat1, lng1, lat2, lng2) {
     // The radius of the planet earth in meters
+    console.log(lat1, lng1, lat2, lng2);
     let R = 6378137;
     let dLat = this.degreesToRadians(lat2 - lat1);
     let dLong = this.degreesToRadians(lng2 - lng1);
