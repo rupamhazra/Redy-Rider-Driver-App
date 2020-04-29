@@ -285,7 +285,7 @@ export class LocationTrackingPage implements OnInit {
     const that = this;
 
     //console.log(this.DirectionsWaypoint);
-    that.directionsService.route({
+    this.directionsService.route({
       origin: this.location_source, //origin 
       destination: this.location_destination, //destination
       travelMode: 'DRIVING',
@@ -293,9 +293,10 @@ export class LocationTrackingPage implements OnInit {
     }, (response, status) => {
       //alert(1);
       if (status === 'OK') {
-
+        console.log(response);
         that.directionsDisplay.setDirections(response);
-        this.stoppage_list.forEach(element => {
+        that.directionsDisplay.setMap(that.map);
+        that.stoppage_list.forEach(element => {
           let waypoint_location_marker;
           let pos_marker = {
             lat: parseFloat(element.lat),
@@ -307,7 +308,7 @@ export class LocationTrackingPage implements OnInit {
           //console.log("Location:" ,element.location_name);
           waypoint_location_marker = new google.maps.Marker({
             position: pos_marker,
-            map: this.map,
+            map: that.map,
             icon: element.icon,
             //icon: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
             title: 'you are here!',
