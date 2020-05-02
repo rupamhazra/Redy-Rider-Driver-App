@@ -274,7 +274,7 @@ export class LocationTrackingPage implements OnInit {
       this.map.setCenter(pos);
       this.map.setZoom(18);
 
-      
+
 
     }).catch((error) => {
       console.log('Error getting location', error);
@@ -609,47 +609,47 @@ export class LocationTrackingPage implements OnInit {
 
     console.log('current loaction stoppage : ', current_pos_marker);
     console.log('next loaction stoppage : ', next_stop_pos_marker);
-     var distanceInMeters = this.getDistanceBetweenPoints(current_pos_marker.lat, current_pos_marker.lng, next_stop_pos_marker.lat, next_stop_pos_marker.lng);
-     console.log('distanceInMeters', distanceInMeters);
+    var distanceInMeters = this.getDistanceBetweenPoints(current_pos_marker.lat, current_pos_marker.lng, next_stop_pos_marker.lat, next_stop_pos_marker.lng);
+    console.log('distanceInMeters', distanceInMeters);
 
-     let date = new Date();
+    let date = new Date();
 
-         let fire_base_car_id = that.car_type + "-" + that.car_id;
-         let record = {};
-         var debugger_already_exist_firebase;
-         record['current_cordinates'] = current_pos_marker;
-         record['next_stoppage_cordinates'] = next_stop_pos_marker;
-         record['next_stoppage_name'] = that.next_stoppage_info.location_name; //////car name
-         record['distance'] = distanceInMeters;
-         record['time'] = ((date.getHours()) * 100) + date.getMinutes();
-         record['date'] = date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
-         //alert(fire_base_car_id);
-         that.afs.collection('debugger').snapshotChanges().subscribe(data => {
-           //this.driver_curent_live_location = 
-           data.map(e => {
-             if (e.payload.doc.id == fire_base_car_id) {
- 
-               debugger_already_exist_firebase = true;
-               //console.log("firebase data",e.payload.doc);
-             }
-           })
-         });
-         if (debugger_already_exist_firebase == true) {
- 
-           that.afs.collection('debugger').doc(fire_base_car_id).update(record);
- 
-         } else {
- 
-           that.afs.collection('debugger').doc(fire_base_car_id).set(record); //////car id
-         }
- 
+    let fire_base_car_id = that.car_type + "-" + that.car_id;
+    let record = {};
+    var debugger_already_exist_firebase;
+    record['current_cordinates'] = current_pos_marker;
+    record['next_stoppage_cordinates'] = next_stop_pos_marker;
+    record['next_stoppage_name'] = that.next_stoppage_info.location_name; //////car name
+    record['distance'] = distanceInMeters;
+    record['time'] = ((date.getHours()) * 100) + date.getMinutes();
+    record['date'] = date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
+    //alert(fire_base_car_id);
+    that.afs.collection('debugger').snapshotChanges().subscribe(data => {
+      //this.driver_curent_live_location = 
+      data.map(e => {
+        if (e.payload.doc.id == fire_base_car_id) {
 
+          debugger_already_exist_firebase = true;
+          //console.log("firebase data",e.payload.doc);
+        }
+      })
+    });
+    if (debugger_already_exist_firebase == true) {
+
+      that.afs.collection('debugger').doc(fire_base_car_id).update(record);
+
+    } else {
+
+      that.afs.collection('debugger').doc(fire_base_car_id).set(record); //////car id
+    }
 
 
-     if (distanceInMeters <= 200) {
+
+
+    if (distanceInMeters <= 200) {
       reached_stoppage = true;
       if (that.next_stoppage_list_array[0].stop == true) {
-       
+
         alert('Route Journey completed!');
         that.ride_end = true;
         that.next_stoppage_info = false;
@@ -730,18 +730,18 @@ export class LocationTrackingPage implements OnInit {
     //       distance_checker = 99;
     //     }
 
-        //console.log("driver_distance_from_next_destination", driver_distance_from_next_destination);
-        // if (driver_distance_from_next_destination <= distance_checker) {
-        //   reached_stoppage = true;
-        //   if (that.next_stoppage_list_array[0].stop == true) {
-        //     that.afs.collection('stoppage').doc(fire_base_car_id).set(record);
-        //     alert('Route Journey completed!');
-        //     that.ride_end = true;
-        //     that.next_stoppage_info = false;
-        //   }
-        //   that.previous_stoppage_list_array.push(that.next_stoppage_list_array[0]);
-        //   that.next_stoppage_list_array.shift();
-        //   that.next_stoppage_info = that.next_stoppage_list_array[0];
+    //console.log("driver_distance_from_next_destination", driver_distance_from_next_destination);
+    // if (driver_distance_from_next_destination <= distance_checker) {
+    //   reached_stoppage = true;
+    //   if (that.next_stoppage_list_array[0].stop == true) {
+    //     that.afs.collection('stoppage').doc(fire_base_car_id).set(record);
+    //     alert('Route Journey completed!');
+    //     that.ride_end = true;
+    //     that.next_stoppage_info = false;
+    //   }
+    //   that.previous_stoppage_list_array.push(that.next_stoppage_list_array[0]);
+    //   that.next_stoppage_list_array.shift();
+    //   that.next_stoppage_info = that.next_stoppage_list_array[0];
 
     //       let record1 = {};
     //       record1['next_stoppage_list_array'] = that.next_stoppage_list_array;

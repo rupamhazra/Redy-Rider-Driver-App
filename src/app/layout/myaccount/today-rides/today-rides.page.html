@@ -8,9 +8,13 @@
         <mat-panel-description>
         <ion-grid no-padding no-margin>
           <ion-row no-padding no-margin>
-            <ion-col size="2" class="primary-back col-pad"><mat-icon>directions_bus</mat-icon></ion-col>
-            <ion-col size="10" class="second-back col-pad font-13">
-              {{item.car_type | uppercase}} - {{item.car_no}}
+            <ion-col size="2" class="primary-back"><mat-icon>directions_bus</mat-icon></ion-col>
+            <ion-col size="10" class="second-back col-pad font-13" text-center>
+              <p class="no_margin_p">
+                {{item.start_location}}
+              </p>
+              to
+              <p class="no_margin_p">{{item.end_location}}</p>
               <p style="margin: 5px 0px 5px 0;text-align: center;color: #085a9a;">
                 <fa-icon [icon]="['fas','clock']" size="1x" class="rstar-icon"></fa-icon>
                 Start at :  {{item.start_time}}
@@ -22,6 +26,11 @@
       </mat-panel-description>
       </mat-expansion-panel-header>
       <ion-grid no-margin no-padding class="margin-top">
+        <ion-row>
+          <ion-col text-center>
+            {{item.car_type}} - {{item.car_no}}
+          </ion-col>
+        </ion-row>
         <ion-row class="">
           <ion-col class="font-13">
             
