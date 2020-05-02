@@ -220,7 +220,7 @@ export class LocationTrackingPage implements OnInit {
     const config: BackgroundGeolocationConfig = {
       desiredAccuracy: 10,
       stationaryRadius: 20,
-      interval: 5000,
+      interval: 1000,
       distanceFilter: 30,
       debug: true, //  enable this hear sounds for background-geolocation life-cycle.
       stopOnTerminate: false, // enable this to clear background location settings when the app terminates
@@ -427,15 +427,15 @@ export class LocationTrackingPage implements OnInit {
   }
 
   create_tracking_inFirebase() {
-    var driver_current_lat;
-    var driver_current_lng;
+    // var driver_current_lat;
+    // var driver_current_lng;
     const that = this;
     this.geolocation.getCurrentPosition().then((resp) => {
-      driver_current_lat = resp.coords.latitude;
-      driver_current_lng = resp.coords.longitude;
+      that.driver_current_lat = resp.coords.latitude;
+      that.driver_current_lng = resp.coords.longitude;
 
-      var driver_current_lat_1 = parseFloat(driver_current_lat);//parse float value of lat
-      var driver_current_lng_1 = parseFloat(driver_current_lng);//parse float value of lng
+      var driver_current_lat_1 = parseFloat(that.driver_current_lat);//parse float value of lat
+      var driver_current_lng_1 = parseFloat(that.driver_current_lng);//parse float value of lng
 
       /////////////////////////////////////Distance/////////////////////////////
 
@@ -524,13 +524,13 @@ export class LocationTrackingPage implements OnInit {
     this.back_button_visible = false;
     this.insomnia.keepAwake()
       .then(
-        () => console.log('success'),
-        () => console.log('error')
+        () => console.log('background service  success'),
+        () => console.log('background service error')
       );
 
     this.backgroundGeolocation.start();
     let options = {
-      timeout: 5000,
+      timeout: 1000,
       enableHighAccuracy: true
     };
     let point_nember = 1;
@@ -646,7 +646,7 @@ export class LocationTrackingPage implements OnInit {
 
 
 
-     if (distanceInMeters <= 200) {
+     if (distanceInMeters <= 100) {
       reached_stoppage = true;
       if (that.next_stoppage_list_array[0].stop == true) {
        
@@ -816,85 +816,117 @@ export class LocationTrackingPage implements OnInit {
   }
   stopTracking() {
     //console.log("distance dirve",parseFloat(this.driver_distance_from_ending_point));
-    console.log('gghhh')
+    console.log('gghhh');
     const that = this;
     var ending_driver_current_lat;
     var ending_driver_current_lng;
     this.storage.set('isTracking', false);
-    this.geolocation.getCurrentPosition().then((resp) => {
-      //console.log(resp.coords);
+    //this.geolocation.getCurrentPosition().then((resp) => {
+      //console.log('resp.coords',resp.coords);
       //alert(1);
 
-      ending_driver_current_lat = resp.coords.latitude;
-      ending_driver_current_lng = resp.coords.longitude;
+      //ending_driver_current_lat = resp.coords.latitude;
+      //ending_driver_current_lng = resp.coords.longitude;
 
-      var driver_current_lat_1 = parseFloat(ending_driver_current_lat);
-      var driver_current_lng_1 = parseFloat(ending_driver_current_lng);
+      //var driver_current_lat_1 = parseFloat(ending_driver_current_lat);
+      //var driver_current_lng_1 = parseFloat(ending_driver_current_lng);
 
-      this.distanceService.getDistanceMatrix({
-        origins: [new google.maps.LatLng(driver_current_lat_1, driver_current_lng_1)],
-        destinations: [this.location_destination],
-        travelMode: 'DRIVING',
-        unitSystem: google.maps.UnitSystem.METRIC,
-        avoidHighways: false,
-        avoidTolls: false
-      }, function (response, status) {
-        if (status !== 'OK') {
-          alert(' stoppage distance matrix Error was: ' + status);
-        } else {
+      // this.distanceService.getDistanceMatrix({
+      //   origins: [new google.maps.LatLng(driver_current_lat_1, driver_current_lng_1)],
+      //   destinations: [this.location_destination],
+      //   travelMode: 'DRIVING',
+      //   unitSystem: google.maps.UnitSystem.METRIC,
+      //   avoidHighways: false,
+      //   avoidTolls: false
+      // }, function (response, status) {
+      //   if (status !== 'OK') {
+      //     alert(' stoppage distance matrix Error was: ' + status);
+      //   } else {
 
-          // var originList = response.originAddresses;
-          // var destinationList = response.destinationAddresses;
+      //     // var originList = response.originAddresses;
+      //     // var destinationList = response.destinationAddresses;
 
-          // var get_distance=response.rows[0].elements;
-          that.driver_distance_from_ending_point = parseFloat(response.rows[0].elements[0].distance.text);
+      //     // var get_distance=response.rows[0].elements;
+      //     that.driver_distance_from_ending_point = parseFloat(response.rows[0].elements[0].distance.text);
 
-          //console.log('originList' , that.driver_distance_from_starting_point);
-          console.log('destinationList', that.driver_distance_from_ending_point);
+      //     //console.log('originList' , that.driver_distance_from_starting_point);
+      //     console.log('destinationList', that.driver_distance_from_ending_point);
 
-          let driver_distance_from_next_stoppage = response.rows[0].elements[0].distance.text.split(" ");
-          var distance_checker;
-          if (driver_distance_from_next_stoppage[1] == 'km') {
-            distance_checker = 200;
-          } else {
-            distance_checker = 20000;
-          }
-
-
-          if (that.driver_distance_from_starting_point <= distance_checker) {
-            that.isTracking_resume = false;
-            that.isTracking = false;
+      //     let driver_distance_from_next_stoppage = response.rows[0].elements[0].distance.text.split(" ");
+      //     var distance_checker;
+      //     if (driver_distance_from_next_stoppage[1] == 'km') {
+      //       distance_checker = 200;
+      //     } else {
+      //       distance_checker = 20000;
+      //     }
 
 
-            that.backgroundGeolocation.stop();
-            that.watch.unsubscribe();
-            //this.currentMapTrack.setMap(null);
-
-            this.insomnia.allowSleepAgain()
-              .then(
-                () => console.log('success'),
-                () => console.log('error')
-              );
+      //     if (that.driver_distance_from_starting_point <= distance_checker) {
+      //       that.isTracking_resume = false;
+      //       that.isTracking = false;
 
 
+      //       that.backgroundGeolocation.stop();
+      //       that.watch.unsubscribe();
+      //       //this.currentMapTrack.setMap(null);
 
-            let car_id = this.car_type + "-" + this.car_id;
-            this.afs.collection('locations').doc(car_id).delete();
-            this.endJourney();
+      //       this.insomnia.allowSleepAgain()
+      //         .then(
+      //           () => console.log('success'),
+      //           () => console.log('error')
+      //         );
 
 
 
-          } else {
-            alert("The Driver must End the ride from the Ending point of the route!");
-          }
+      //       let car_id = this.car_type + "-" + this.car_id;
+      //       this.afs.collection('locations').doc(car_id).delete();
+      //       this.endJourney();
 
+
+
+      //     } else {
+      //       alert("The Driver must End the ride from the Ending point of the route!");
+      //     }
+
+      //   }
+      // });
+
+       console.log('destination_lat',this.location_destination.lat);
+       console.log('destination lng',this.location_destination.lng);
+       console.log('location_lat',this.driver_current_lat);
+       console.log('location_lng',this.driver_current_lng);
+      var distanceInMeters = this.getDistanceBetweenPoints(this.driver_current_lat, this.driver_current_lng, this.location_destination.lat, this.location_destination.lat);
+      
+      console.log('stoppage_distanceInMeters', distanceInMeters/100);
+
+
+      if (distanceInMeters <= 20000000) {
+              this.isTracking_resume = false;
+              this.isTracking = false;
+  
+  
+              this.backgroundGeolocation.stop();
+              this.watch.unsubscribe();
+              //this.currentMapTrack.setMap(null);
+  
+              this.insomnia.allowSleepAgain()
+                .then(
+                  () => console.log('success'),
+                  () => console.log('error')
+                );
+  
+  
+  
+              let car_id = this.car_type + "-" + this.car_id;
+
+              this.afs.collection('locations').doc(car_id).delete();
+              this.endJourney();
         }
-      });
 
 
-    }).catch((error) => {
-      console.log('Error getting location', error);
-    });
+    // }).catch((error) => {
+    //   console.log('Error getting location', error);
+    // });
 
 
 
@@ -924,9 +956,11 @@ export class LocationTrackingPage implements OnInit {
     );
   }
   endJourney() {
+    console.log('End journey');
     this.progress_bar = true;
     this.storage.get('drive_history_id').then((val) => {
       if (val) {
+        console.log('driver history id', val);
         let request_data = { "type": "drive_end", "drive_history_id": val }
         this.officePoolCarService.todayRidesService(request_data).subscribe(
           res => {
