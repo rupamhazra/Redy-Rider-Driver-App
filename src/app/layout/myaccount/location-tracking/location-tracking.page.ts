@@ -65,7 +65,7 @@ export class LocationTrackingPage implements OnInit {
   location_destination;
   ride_startTime;
   ride_endTime;
-  already_exist_firebase;
+
   driver_distance_from_starting_point;
   driver_distance_from_ending_point
   DirectionsWaypoint = [];
@@ -276,7 +276,7 @@ export class LocationTrackingPage implements OnInit {
       this.map.setCenter(pos);
       this.map.setZoom(18);
 
-      
+
 
     }).catch((error) => {
       console.log('Error getting location', error);
@@ -411,26 +411,29 @@ export class LocationTrackingPage implements OnInit {
   startTracking() {
     this.isTracking_resume = false;
     let car_id = this.car_type + "-" + this.car_id;
-    //console.log("car: ", car_id);
-    this.afs.collection('locations').snapshotChanges().subscribe(data => {
-      //this.driver_curent_live_location = 
-      data.map(e => {
-        if (e.payload.doc.id == car_id) {
-          this.already_exist_firebase = true;
+    
+
+    this.afs.collection("locations").doc(car_id).get().toPromise().then(doc => {
+        if (!doc.exists) {
+          console.log('No such document!');
+          this.create_tracking_inFirebase();
+        } else {
+          //console.log('Document data:', doc.data());
+          console.log('firebase entry exits');
+          this.tracking_location();
+          this.resume_stoppage();
         }
       })
-    });
-    if (this.already_exist_firebase == true) {
-      console.log('firebase entry exits')
-      this.tracking_location();
-    } else {
-      this.create_tracking_inFirebase();
-    }
+      .catch(err => {
+        console.log('Error getting document', err);
+      });
+
   }
 
   create_tracking_inFirebase() {
     // var driver_current_lat;
     // var driver_current_lng;
+    console.log('firebase entry dosent exits');
     const that = this;
     this.geolocation.getCurrentPosition().then((resp) => {
       that.driver_current_lat = resp.coords.latitude;
@@ -611,70 +614,69 @@ export class LocationTrackingPage implements OnInit {
 
     console.log('current loaction stoppage : ', current_pos_marker);
     console.log('next loaction stoppage : ', next_stop_pos_marker);
-     var distanceInMeters = this.getDistanceBetweenPoints(current_pos_marker.lat, current_pos_marker.lng, next_stop_pos_marker.lat, next_stop_pos_marker.lng);
-     console.log('distanceInMeters', distanceInMeters);
+    var distanceInMeters = this.getDistanceBetweenPoints(current_pos_marker.lat, current_pos_marker.lng, next_stop_pos_marker.lat, next_stop_pos_marker.lng);
+    console.log('distanceInMeters', distanceInMeters);
 
-     let date = new Date();
+    let date = new Date();
 
-         let fire_base_car_id = that.car_type + "-" + that.car_id;
-         let record = {};
-         var debugger_already_exist_firebase;
-         record['current_cordinates'] = current_pos_marker;
-         record['next_stoppage_cordinates'] = next_stop_pos_marker;
-         record['next_stoppage_name'] = that.next_stoppage_info.location_name; //////car name
-         record['distance'] = distanceInMeters;
-         record['time'] = ((date.getHours()) * 100) + date.getMinutes();
-         record['date'] = date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
-         //alert(fire_base_car_id);
-         that.afs.collection('debugger').snapshotChanges().subscribe(data => {
-           //this.driver_curent_live_location = 
-           data.map(e => {
-             if (e.payload.doc.id == fire_base_car_id) {
- 
-               debugger_already_exist_firebase = true;
-               //console.log("firebase data",e.payload.doc);
-             }
-           })
-         });
-         if (debugger_already_exist_firebase == true) {
- 
-           that.afs.collection('debugger').doc(fire_base_car_id).update(record);
- 
-         } else {
- 
-           that.afs.collection('debugger').doc(fire_base_car_id).set(record); //////car id
-         }
- 
+    let fire_base_car_id = that.car_type + "-" + that.car_id;
+    let record = {};
+    var debugger_already_exist_firebase;
+    record['current_cordinates'] = current_pos_marker;
+    record['next_stoppage_cordinates'] = next_stop_pos_marker;
+    record['next_stoppage_name'] = that.next_stoppage_info.location_name; //////car name
+    record['distance'] = distanceInMeters;
+    record['time'] = ((date.getHours()) * 100) + date.getMinutes();
+    record['date'] = date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();
+    //alert(fire_base_car_id);
+    that.afs.collection('debugger').snapshotChanges().subscribe(data => {
+      //this.driver_curent_live_location = 
+      data.map(e => {
+        if (e.payload.doc.id == fire_base_car_id) {
 
+          debugger_already_exist_firebase = true;
+          //console.log("firebase data",e.payload.doc);
+        }
+      })
+    });
+    if (debugger_already_exist_firebase == true) {
+
+      that.afs.collection('debugger').doc(fire_base_car_id).update(record);
+
+    } else {
+
+      that.afs.collection('debugger').doc(fire_base_car_id).set(record); //////car id
+    }
 
 
-     if (distanceInMeters <= 100) {
+
+
+    if (distanceInMeters <= 100) {
       reached_stoppage = true;
       if (that.next_stoppage_list_array[0].stop == true) {
-       
+
         alert('Route Journey completed!');
         that.ride_end = true;
         that.next_stoppage_info = false;
       }
       that.previous_stoppage_list_array.push(that.next_stoppage_list_array[0]);
 
-      that.next_stoppage_list_array.shift();
-      that.next_stoppage_info = that.next_stoppage_list_array[0];
-
+     
 
      
 
       let date = new Date();
 
-      let stoppage_log={stoppage_id:that.previous_stoppage_list_array[0].stoppage_id,time:((date.getHours()) * 100) + date.getMinutes(),date:date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear()};
+      let today_date=date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();
+
+      let stoppage_log={stoppage_id:that.next_stoppage_list_array[0].stoppage_id,time:((date.getHours()) * 100) + date.getMinutes(),date:today_date};
 
       that.stoppage_log_array.push(stoppage_log);
 
-       
-
-         let fire_base_route_id = that.driver_id + "-" + that.car_id + "-" + that.route_id + "-" + that.route_timing_id;
+      let year_wise_montly_today_date=date.getFullYear() + '/' + (date.getMonth()+1) + '/' + date.getDate();
+      let fire_base_route_id = year_wise_montly_today_date +'/'+ this.car_id + "/" +  this.driver_id + "-" + this.route_id + "-" + this.route_timing_id;
          let record = {};
-         var debugger_already_exist_firebase;
+         var stoppage_already_exist_firebase;
          record['driver_id'] = that.driver_id;
          record['car_id'] = that.car_id;
          record['route_id'] = that.route_id;
@@ -687,12 +689,12 @@ export class LocationTrackingPage implements OnInit {
            data.map(e => {
              if (e.payload.doc.id == fire_base_route_id) {
  
-               debugger_already_exist_firebase = true;
-               //console.log("firebase data",e.payload.doc);
+               stoppage_already_exist_firebase = true;
+               console.log("firebase data",e.payload.doc);
              }
            })
          });
-         if (debugger_already_exist_firebase == true) {
+         if (stoppage_already_exist_firebase == true) {
  
            that.afs.collection('stoppage_log').doc(fire_base_route_id).update(record);
  
@@ -700,6 +702,11 @@ export class LocationTrackingPage implements OnInit {
  
            that.afs.collection('stoppage_log').doc(fire_base_route_id).set(record); //////car id
          }
+
+
+         that.next_stoppage_list_array.shift();
+         that.next_stoppage_info = that.next_stoppage_list_array[0];
+         that.myStepper.next();
 
 
 
@@ -747,7 +754,7 @@ export class LocationTrackingPage implements OnInit {
     record['long'] = this.driver_current_lng;
     record['name'] = 'test1.03.2020'; ///////car name optional
     record['time'] = ((date.getHours()) * 100) + date.getMinutes();
-    record['date'] = date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
+    record['date'] = date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();
     let car_id = this.car_type + "-" + this.car_id; ///////car id required
     this.afs.collection('locations').doc(car_id).update(record);
   }
@@ -818,7 +825,7 @@ export class LocationTrackingPage implements OnInit {
         this.progress_bar = false;
       },
       error => {
-        //console.log("error::::" + error.error.msg);
+        console.log("error::::" + error.error.msg);
         this.progress_bar = false;
         //this.toasterService.showToast(error.error.msg, 2000)
       }
@@ -908,6 +915,51 @@ export class LocationTrackingPage implements OnInit {
       'from_which_page': 'location-tracking-for-each-passenger-details-page', 'pay_id': pay_id, 'stoppage_id': stoppage_id
     }
     this.modalService.openModal(RouteStoppageModalPage, data, 'passenger_modal_css');
+  }
+
+  resume_stoppage(){
+    //alert();
+    let date = new Date();
+    let current_year=date.getFullYear().toString();
+    let current_month=(date.getMonth()+1).toString();
+    let today_date=(date.getDate()).toString();
+    //let year_wise_montly_today_date=date.getFullYear() + '/' + (date.getMonth()+1) + '/' + date.getDate();
+    let fire_base_route_id = this.driver_id +  "-" + this.route_id + "-" + this.route_timing_id;
+    var stoppage_already_exist_firebase;
+    console.log(fire_base_route_id);
+    //this.afs.collection("stoppage_log").doc(current_year).collection(current_month).doc().get().toPromise().then(doc => {
+      this.afs.collection("stoppage_log").doc(current_year).collection(current_month).doc(today_date).collection(this.car_id).doc(fire_base_route_id).get().toPromise().then(doc => {
+      if (!doc.exists) {
+        console.log('No such Stoppage log!');
+        
+      } else {
+        console.log('Document data:', doc.data());
+        //console.log('firebase entry exits');
+
+        doc.data().stoppage_log.forEach(stops => {
+          if(stops.stoppage_id == this.next_stoppage_list_array[0].stoppage_id){
+          this.previous_stoppage_list_array.push(this.next_stoppage_list_array[0]);
+
+          this.next_stoppage_list_array.shift();
+          this.next_stoppage_info = this.next_stoppage_list_array[0];
+          this.myStepper.next();
+          }
+          
+        });
+        
+      }
+    })
+    .catch(err => {
+      console.log('Error getting document', err);
+    });
+
+      // this.previous_stoppage_list_array.push(this.next_stoppage_list_array[0]);
+
+      // this.next_stoppage_list_array.shift();
+      // this.next_stoppage_info = this.next_stoppage_list_array[0];
+      // this.myStepper.next();
+
+
   }
 
 }
