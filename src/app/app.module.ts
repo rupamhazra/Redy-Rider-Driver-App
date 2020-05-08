@@ -44,6 +44,7 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { Insomnia } from '@ionic-native/insomnia/ngx';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
+import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -89,7 +90,8 @@ import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
     BarcodeScanner,
     FileTransfer,
     Insomnia,
-    LocationAccuracy
+    LocationAccuracy,
+    TextToSpeech
 
   ],
   bootstrap: [AppComponent],
