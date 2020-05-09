@@ -777,25 +777,7 @@ export class LocationTrackingPage implements OnInit {
 
 
       if (distanceInMeters <= 20000000) {
-              this.isTracking_resume = false;
-              this.isTracking = false;
-  
-  
-              this.backgroundGeolocation.stop();
-              this.watch.unsubscribe();
-              //this.currentMapTrack.setMap(null);
-  
-              this.insomnia.allowSleepAgain()
-                .then(
-                  () => console.log('success'),
-                  () => console.log('error')
-                );
-  
-  
-  
-              let car_id = this.car_type + "-" + this.car_id;
-
-              this.afs.collection('locations').doc(car_id).delete();
+             
               this.endJourney();
         }
 
@@ -832,6 +814,29 @@ export class LocationTrackingPage implements OnInit {
     );
   }
   endJourney() {
+
+    this.isTracking_resume = false;
+    this.isTracking = false;
+
+
+    this.backgroundGeolocation.stop();
+    this.watch.unsubscribe();
+    //this.currentMapTrack.setMap(null);
+
+    this.insomnia.allowSleepAgain()
+      .then(
+        () => console.log('success'),
+        () => console.log('error')
+      );
+
+
+
+    let car_id = this.car_type + "-" + this.car_id;
+
+    this.afs.collection('locations').doc(car_id).delete();
+    this.afs.collection('admin_stoppage_request').doc(car_id).delete();
+
+
     console.log('End journey');
     this.progress_bar = true;
     this.storage.get('drive_history_id').then((val) => {
@@ -960,6 +965,24 @@ export class LocationTrackingPage implements OnInit {
       // this.myStepper.next();
 
 
+  }
+
+  check_firebase_for_admin_stop_resquest(){
+    let stoppage_admin_request_exist_firebase;
+    let car_id = this.car_type + "-" + this.car_id;
+    this.afs.collection('admin_stoppage_request').snapshotChanges().subscribe(data => {
+      //this.driver_curent_live_location = 
+      data.map(e => {
+        if (e.payload.doc.id == car_id) {
+
+          stoppage_admin_request_exist_firebase = true;
+          console.log("firebase data",e.payload.doc);
+        }
+      })
+    });
+    if(stoppage_admin_request_exist_firebase==true){
+      this.endJourney();
+    }
   }
 
 }
