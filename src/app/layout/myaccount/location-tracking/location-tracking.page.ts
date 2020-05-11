@@ -847,32 +847,32 @@ export class LocationTrackingPage implements OnInit {
 
 
 
-    // let car_id = this.car_type + "-" + this.car_id;
+    let car_id = this.car_type + "-" + this.car_id;
 
-    // this.afs.collection('locations').doc(car_id).delete();
-    // this.afs.collection('admin_stoppage_request').doc(car_id).delete();
+    this.afs.collection('locations').doc(car_id).delete();
+    this.afs.collection('admin_stoppage_request').doc(car_id).delete();
 
 
-    // console.log('End journey');
-    // this.progress_bar = true;
-    // this.storage.get('drive_history_id').then((val) => {
-    //   if (val) {
-    //     console.log('driver history id', val);
-    //     let request_data = { "type": "drive_end", "drive_history_id": val }
-    //     this.officePoolCarService.todayRidesService(request_data).subscribe(
-    //       res => {
-    //         this.progress_bar = false;
-    //         this.authenticationService.logout();
-    //         navigator['app'].exitApp();
-    //       },
-    //       error => {
-    //         //console.log("error::::" + error.error.msg);
-    //         this.progress_bar = false;
-    //         //this.toasterService.showToast(error.error.msg, 2000)
-    //       }
-    //     );
-    //   }
-    // });
+    console.log('End journey');
+    this.progress_bar = true;
+    this.storage.get('drive_history_id').then((val) => {
+      if (val) {
+        console.log('driver history id', val);
+        let request_data = { "type": "drive_end", "drive_history_id": val }
+        this.officePoolCarService.todayRidesService(request_data).subscribe(
+          res => {
+            this.progress_bar = false;
+            this.authenticationService.logout();
+            navigator['app'].exitApp();
+          },
+          error => {
+            //console.log("error::::" + error.error.msg);
+            this.progress_bar = false;
+            //this.toasterService.showToast(error.error.msg, 2000)
+          }
+        );
+      }
+    });
 
   }
   scanQrCode() {
