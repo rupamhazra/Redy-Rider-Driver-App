@@ -201,7 +201,7 @@ export class LocationTrackingPage implements OnInit {
         this.ride_startTime = parseFloat(element.result.start_end_time.start_time);
         this.ride_endTime = parseFloat(element.result.start_end_time.end_time);
         this.loadMap();
-        console.log('element:', element.result.drive_status);
+        //console.log('element:', element.result.drive_status);
         if (element.result.drive_status == '1') {
           this.isTracking_resume = true;
 
@@ -232,11 +232,12 @@ export class LocationTrackingPage implements OnInit {
     this.backgroundGeolocation.configure(config).then(() => {
       this.backgroundGeolocation.on(BackgroundGeolocationEvents.location).subscribe(
         (location: BackgroundGeolocationResponse) => {
-          console.log(location);
+          //console.log(location);
           this.driver_current_lat = location.latitude;
           this.driver_current_lng = location.longitude;
           this.update_driver_cordinated_to_firebase();
           this.get_next_stoppage_info();
+          this.check_firebase_for_admin_stop_resquest();
           this.backgroundGeolocation.finish(); // FOR IOS ONLY
         });
     });
@@ -262,6 +263,7 @@ export class LocationTrackingPage implements OnInit {
       zoom: 18,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       disableDefaultUI: true,
+      heading:90
     });
     this.geolocation.getCurrentPosition().then(resp => {
       //console.log('resp', resp)
@@ -292,8 +294,8 @@ export class LocationTrackingPage implements OnInit {
   calculateAndDisplayRoute() {
     const that = this;
 
-    console.log(this.location_source);
-    console.log(this.location_destination);
+    //console.log(this.location_source);
+    //console.log(this.location_destination);
     this.directionsService.route({
       origin: this.location_source, //origin 
       destination: this.location_destination, //destination
@@ -302,7 +304,7 @@ export class LocationTrackingPage implements OnInit {
     }, (response, status) => {
       //alert(1);
       if (status === 'OK') {
-        console.log(response);
+        //console.log(response);
         that.directionsDisplay.setDirections(response);
         this.directionsDisplay.setMap(this.map);
         that.stoppage_list.forEach(element => {
@@ -325,6 +327,14 @@ export class LocationTrackingPage implements OnInit {
           });
         });
 
+        console.log('source location',this.location_source);
+        console.log('destination location',this.location_destination);
+        let source=new google.maps.LatLng(this.location_source.lat,this.location_source.lng);
+        let destination =new google.maps.LatLng(this.location_destination.lat,this.location_destination.lng);
+        var heading = google.maps.geometry.spherical.computeHeading(source, destination);
+        console.log('map heading',heading);
+        that.map.setHeading(heading);
+
       } else {
         window.alert('Directions request failed due to ' + status);
       }
@@ -346,9 +356,9 @@ export class LocationTrackingPage implements OnInit {
           })
         )
       );
-      console.log('this.locations', this.locations)
+      //console.log('this.locations', this.locations)
       this.locations.subscribe(locations => {
-        console.log('new location: ', locations);
+        //console.log('new location: ', locations);
         this.loc = locations;
         //this.updateMap(locations);
       })
@@ -417,11 +427,11 @@ export class LocationTrackingPage implements OnInit {
 
     this.afs.collection("locations").doc(car_id).get().toPromise().then(doc => {
       if (!doc.exists) {
-        console.log('No such document!');
+        //console.log('No such document!');
         this.create_tracking_inFirebase();
       } else {
         //console.log('Document data:', doc.data());
-        console.log('firebase entry exits');
+        //console.log('firebase entry exits');
         this.tracking_location();
         this.resume_stoppage();
       }
@@ -435,7 +445,7 @@ export class LocationTrackingPage implements OnInit {
   create_tracking_inFirebase() {
     // var driver_current_lat;
     // var driver_current_lng;
-    console.log('firebase entry dosent exits');
+    //console.log('firebase entry dosent exits');
     const that = this;
     this.geolocation.getCurrentPosition().then((resp) => {
       that.driver_current_lat = resp.coords.latitude;
@@ -475,7 +485,7 @@ export class LocationTrackingPage implements OnInit {
             //that.ride_startTime-15 // 15 min erly of ride time
 
             if ((that.ride_startTime - 1500) <= ((date.getHours()) * 100) + date.getMinutes()) { ////15 min
-              console.log("ride time", (parseFloat(that.ride_startTime) - 1500));
+              //console.log("ride time", (parseFloat(that.ride_startTime) - 1500));
 
 
               // that.geolocation.getCurrentPosition().then((resp) => {
@@ -564,6 +574,8 @@ export class LocationTrackingPage implements OnInit {
 
           if (this.last_driver_postion != undefined) {
             //console.log('last postion ',this.last_driver_postion);
+            //console.log('new postion ',new_driver_location);
+
             var heading = google.maps.geometry.spherical.computeHeading(this.last_driver_postion, new_driver_location);
             var car = "M17.402,0H5.643C2.526,0,0,3.467,0,6.584v34.804c0,3.116,2.526,5.644,5.643,5.644h11.759c3.116,0,5.644-2.527,5.644-5.644 V6.584C23.044,3.467,20.518,0,17.402,0z M22.057,14.188v11.665l-2.729,0.351v-4.806L22.057,14.188z M20.625,10.773 c-1.016,3.9-2.219,8.51-2.219,8.51H4.638l-2.222-8.51C2.417,10.773,11.3,7.755,20.625,10.773z M3.748,21.713v4.492l-2.73-0.349 V14.502L3.748,21.713z M1.018,37.938V27.579l2.73,0.343v8.196L1.018,37.938z M2.575,40.882l2.218-3.336h13.771l2.219,3.336H2.575z M19.328,35.805v-7.872l2.729-0.355v10.048L19.328,35.805z";
             this.car_icon = {
@@ -577,11 +589,11 @@ export class LocationTrackingPage implements OnInit {
               // rotation: parseInt(heading[i]),
               anchor: new google.maps.Point(10, 25) // orig 10,50 back of car, 10,0 front of car, 10,25 center of car
             };
-            //console.log('heading', heading);
+            console.log('heading', heading);
             this.car_icon.rotation = heading;
             this.driver_marker.setIcon(this.car_icon);
             //this.driver_marker.rotation = heading;
-            this.map.setHeading = heading;
+            this.map.setHeading = parseInt( 90 + heading);
             //this.map.tilt=45;
           }
           console.log(new_driver_location);
@@ -614,10 +626,10 @@ export class LocationTrackingPage implements OnInit {
       lng: parseFloat(that.next_stoppage_list_array[0].lng)
     };
 
-    console.log('current loaction stoppage : ', current_pos_marker);
-    console.log('next loaction stoppage : ', next_stop_pos_marker);
+    //console.log('current loaction stoppage : ', current_pos_marker);
+    //console.log('next loaction stoppage : ', next_stop_pos_marker);
     var distanceInMeters = this.getDistanceBetweenPoints(current_pos_marker.lat, current_pos_marker.lng, next_stop_pos_marker.lat, next_stop_pos_marker.lng);
-    console.log('distanceInMeters', distanceInMeters);
+    //console.log('distanceInMeters', distanceInMeters);
 
     let date = new Date();
 
@@ -692,7 +704,7 @@ export class LocationTrackingPage implements OnInit {
           if (e.payload.doc.id == fire_base_route_id) {
 
             stoppage_already_exist_firebase = true;
-            console.log("firebase data", e.payload.doc);
+            //console.log("firebase data", e.payload.doc);
           }
         })
       });
@@ -771,13 +783,13 @@ export class LocationTrackingPage implements OnInit {
     this.storage.set('isTracking', false);
 
 
-       console.log('destination_lat',this.location_destination.lat);
-       console.log('destination lng',this.location_destination.lng);
-       console.log('location_lat',this.driver_current_lat);
-       console.log('location_lng',this.driver_current_lng);
+      //  console.log('destination_lat',this.location_destination.lat);
+      //  console.log('destination lng',this.location_destination.lng);
+      //  console.log('location_lat',this.driver_current_lat);
+      //  console.log('location_lng',this.driver_current_lng);
       var distanceInMeters = this.getDistanceBetweenPoints(this.driver_current_lat, this.driver_current_lng, this.location_destination.lat, this.location_destination.lat);
       
-      console.log('stoppage_distanceInMeters', distanceInMeters/100);
+      //console.log('stoppage_distanceInMeters', distanceInMeters/100);
 
 
       if (distanceInMeters <= 20000000) {
@@ -835,32 +847,32 @@ export class LocationTrackingPage implements OnInit {
 
 
 
-    let car_id = this.car_type + "-" + this.car_id;
+    // let car_id = this.car_type + "-" + this.car_id;
 
-    this.afs.collection('locations').doc(car_id).delete();
-    this.afs.collection('admin_stoppage_request').doc(car_id).delete();
+    // this.afs.collection('locations').doc(car_id).delete();
+    // this.afs.collection('admin_stoppage_request').doc(car_id).delete();
 
 
-    console.log('End journey');
-    this.progress_bar = true;
-    this.storage.get('drive_history_id').then((val) => {
-      if (val) {
-        console.log('driver history id', val);
-        let request_data = { "type": "drive_end", "drive_history_id": val }
-        this.officePoolCarService.todayRidesService(request_data).subscribe(
-          res => {
-            this.progress_bar = false;
-            this.authenticationService.logout();
-            navigator['app'].exitApp();
-          },
-          error => {
-            //console.log("error::::" + error.error.msg);
-            this.progress_bar = false;
-            //this.toasterService.showToast(error.error.msg, 2000)
-          }
-        );
-      }
-    });
+    // console.log('End journey');
+    // this.progress_bar = true;
+    // this.storage.get('drive_history_id').then((val) => {
+    //   if (val) {
+    //     console.log('driver history id', val);
+    //     let request_data = { "type": "drive_end", "drive_history_id": val }
+    //     this.officePoolCarService.todayRidesService(request_data).subscribe(
+    //       res => {
+    //         this.progress_bar = false;
+    //         this.authenticationService.logout();
+    //         navigator['app'].exitApp();
+    //       },
+    //       error => {
+    //         //console.log("error::::" + error.error.msg);
+    //         this.progress_bar = false;
+    //         //this.toasterService.showToast(error.error.msg, 2000)
+    //       }
+    //     );
+    //   }
+    // });
 
   }
   scanQrCode() {
@@ -935,14 +947,14 @@ export class LocationTrackingPage implements OnInit {
     //let year_wise_montly_today_date=date.getFullYear() + '/' + (date.getMonth()+1) + '/' + date.getDate();
     let fire_base_route_id = this.driver_id + "-" + this.route_id + "-" + this.route_timing_id;
     var stoppage_already_exist_firebase;
-    console.log(fire_base_route_id);
+    //console.log(fire_base_route_id);
     //this.afs.collection("stoppage_log").doc(current_year).collection(current_month).doc().get().toPromise().then(doc => {
     this.afs.collection("stoppage_log").doc(current_year).collection(current_month).doc(today_date).collection(this.car_id).doc(fire_base_route_id).get().toPromise().then(doc => {
       if (!doc.exists) {
         console.log('No such Stoppage log!');
 
       } else {
-        console.log('Document data:', doc.data());
+        //console.log('Document data:', doc.data());
         //console.log('firebase entry exits');
 
         doc.data().stoppage_log.forEach(stops => {
@@ -980,7 +992,7 @@ export class LocationTrackingPage implements OnInit {
         if (e.payload.doc.id == car_id) {
 
           stoppage_admin_request_exist_firebase = true;
-          console.log("firebase data",e.payload.doc);
+          //console.log("firebase data",e.payload.doc);
         }
       })
     });
