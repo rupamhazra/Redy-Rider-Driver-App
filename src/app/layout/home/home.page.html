@@ -9,7 +9,7 @@
           <div class="center">
             <mat-progress-spinner *ngIf="progress_bar" diameter=50 mode="indeterminate" color="accent"></mat-progress-spinner> 
           </div>
-          <ion-grid *ngIf="!progress_bar">
+          <ion-grid *ngIf="!progress_bar && available_today_rides">
             <ion-row>
               <ion-col>
                 <ion-text class="ion-text-center"><p class="no_margin_p">CHECK YOUR CURRENT RIDE DETAILS &nbsp;&nbsp; <span appClock></span></p></ion-text>
@@ -74,6 +74,17 @@
               </ion-col>
             </ion-row>
           </ion-grid>
+
+          <ion-grid *ngIf="!available_today_rides">
+            <ion-row>
+              <ion-col>
+                <ion-text class="ion-text-center"><p class="no_margin_p">No Rides assigned </p></ion-text>
+                <hr/>
+              </ion-col>
+            </ion-row>
+            
+          </ion-grid>
+
       </div>
     </div>
   </ion-content>

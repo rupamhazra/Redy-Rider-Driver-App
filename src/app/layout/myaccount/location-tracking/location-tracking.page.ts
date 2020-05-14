@@ -472,7 +472,7 @@ export class LocationTrackingPage implements OnInit {
           let driver_distance_from_next_stoppage = response.rows[0].elements[0].distance.text.split(" ");
           var distance_checker;
           if (driver_distance_from_next_stoppage[1] == 'km') {
-            distance_checker = 0.2;
+            distance_checker = 200000;
           } else {
             distance_checker = 200;
           }
@@ -484,9 +484,9 @@ export class LocationTrackingPage implements OnInit {
             // (date.getHours())*100)+date.getMinutes() //// Current time in a army time format
             //that.ride_startTime-15 // 15 min erly of ride time
 
-            if ((that.ride_startTime - 15) <= ((date.getHours()) * 100) + date.getMinutes()) { ////15 min
+            if ((that.ride_startTime - 1500) <= ((date.getHours()) * 100) + date.getMinutes()) { ////15 min
 
-              if ((that.ride_startTime + 15) >= ((date.getHours()) * 100) + date.getMinutes()) {
+              if ((that.ride_startTime + 1500) >= ((date.getHours()) * 100) + date.getMinutes()) {
                 //console.log("ride time", (parseFloat(that.ride_startTime) - 1500));
 
 
@@ -798,7 +798,7 @@ export class LocationTrackingPage implements OnInit {
       //console.log('stoppage_distanceInMeters', distanceInMeters/100);
 
 
-      if (distanceInMeters <= 200) {
+      if (distanceInMeters <= 200000000) {
              
               this.endJourney();
         }
@@ -853,32 +853,32 @@ export class LocationTrackingPage implements OnInit {
 
 
 
-    // let car_id = this.car_type + "-" + this.car_id;
+    let car_id = this.car_type + "-" + this.car_id;
 
-    // this.afs.collection('locations').doc(car_id).delete();
-    // this.afs.collection('admin_stoppage_request').doc(car_id).delete();
+    this.afs.collection('locations').doc(car_id).delete();
+    this.afs.collection('admin_stoppage_request').doc(car_id).delete();
 
 
-    // console.log('End journey');
-    // this.progress_bar = true;
-    // this.storage.get('drive_history_id').then((val) => {
-    //   if (val) {
-    //     console.log('driver history id', val);
-    //     let request_data = { "type": "drive_end", "drive_history_id": val }
-    //     this.officePoolCarService.todayRidesService(request_data).subscribe(
-    //       res => {
-    //         this.progress_bar = false;
-    //         this.authenticationService.logout();
-    //         navigator['app'].exitApp();
-    //       },
-    //       error => {
-    //         //console.log("error::::" + error.error.msg);
-    //         this.progress_bar = false;
-    //         //this.toasterService.showToast(error.error.msg, 2000)
-    //       }
-    //     );
-    //   }
-    // });
+    console.log('End journey');
+    this.progress_bar = true;
+    this.storage.get('drive_history_id').then((val) => {
+      if (val) {
+        console.log('driver history id', val);
+        let request_data = { "type": "drive_end", "drive_history_id": val }
+        this.officePoolCarService.todayRidesService(request_data).subscribe(
+          res => {
+            this.progress_bar = false;
+            this.authenticationService.logout();
+            navigator['app'].exitApp();
+          },
+          error => {
+            //console.log("error::::" + error.error.msg);
+            this.progress_bar = false;
+            //this.toasterService.showToast(error.error.msg, 2000)
+          }
+        );
+      }
+    });
 
   }
   scanQrCode() {

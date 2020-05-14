@@ -7,6 +7,7 @@ import { Platform } from '@ionic/angular';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { OfficePoolCarService } from '../../../core/services/office-pool-car.service';
 import { Events } from '@ionic/angular';
+import { ActionSheetController } from '@ionic/angular';
 import { RouteStoppageModalPage } from '../../office-pool-car-service/route-stoppage-modal/route-stoppage-modal.page';
 import { ModalService } from '../../../core/services/modal.service';
 
@@ -18,6 +19,7 @@ import { ModalService } from '../../../core/services/modal.service';
 export class TodayRidesPage implements OnInit {
   userId = '';
   result = [];
+  available_today_rides=false;
   progress_bar: boolean = false;
   constructor(
     private storage: Storage,
@@ -29,6 +31,7 @@ export class TodayRidesPage implements OnInit {
     public officePoolCarService: OfficePoolCarService,
     public home_page_event: Events,
     public modalService: ModalService,
+    public actionSheetController: ActionSheetController,
   ) {
   }
   ngOnInit() {
@@ -37,6 +40,7 @@ export class TodayRidesPage implements OnInit {
         this.userId = val.id;
         console.log('user_details_val_val', val.id)
         this.getTodayRides();
+        
       }
     });
   }
@@ -46,10 +50,18 @@ export class TodayRidesPage implements OnInit {
     let request_data = { "type": "driver", "user_id": this.userId };
     this.officePoolCarService.todayRidesService(request_data).subscribe(
       res => {
-        ////console.log('res', res)
+        console.log('res', res)
         this.result = res.result;
         //console.log(this.result);
         //this.result.shift();
+        //this.result =[];
+        if(res.status=="success"){
+          //console.log('available_today_rides','success');
+          this.available_today_rides=true;
+          //this.presentActionSheet();
+
+        }
+
         this.progress_bar = false;
       },
       error => {
@@ -66,5 +78,7 @@ export class TodayRidesPage implements OnInit {
     let data = { 'route_id': route_id, 'from_which_page': 'bus-route-details-page', 'start_point': start_point, 'end_point': end_point, 'route_timing_id': route_timing_id }
     this.modalService.openModal(RouteStoppageModalPage, data, 'stoppage_modal_css');
   }
+
+  
 
 }

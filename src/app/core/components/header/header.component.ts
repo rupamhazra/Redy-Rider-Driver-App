@@ -109,6 +109,11 @@ export class HeaderComponent implements OnInit {
       this.title_section_visible = true;
       this.title = "Today's Rides";
     }
+    if (this.router.url.includes('my-rides')) {
+      this.back_button_visible = true;
+      this.title_section_visible = true;
+      this.title = "Next Day Rides";
+    }
   }
   goToPage(page) {
     if (page == 'notifications')

@@ -146,6 +146,12 @@ export class AppComponent {
         icon: './assets/svg/my_ride.svg',
         chileMenu: []
       },
+      {
+        title: "Next Day Rides",
+        url: '/myaccount/my-rides',
+        icon: './assets/svg/my_ride.svg',
+        chileMenu: []
+      },
     ];
 
   }
