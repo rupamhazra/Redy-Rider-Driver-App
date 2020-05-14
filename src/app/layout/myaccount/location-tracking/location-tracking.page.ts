@@ -472,7 +472,7 @@ export class LocationTrackingPage implements OnInit {
           let driver_distance_from_next_stoppage = response.rows[0].elements[0].distance.text.split(" ");
           var distance_checker;
           if (driver_distance_from_next_stoppage[1] == 'km') {
-            distance_checker = 200000;
+            distance_checker = 0.2;
           } else {
             distance_checker = 200;
           }
@@ -484,9 +484,9 @@ export class LocationTrackingPage implements OnInit {
             // (date.getHours())*100)+date.getMinutes() //// Current time in a army time format
             //that.ride_startTime-15 // 15 min erly of ride time
 
-            if ((that.ride_startTime - 1500) <= ((date.getHours()) * 100) + date.getMinutes()) { ////15 min
+            if ((that.ride_startTime - 15) <= ((date.getHours()) * 100) + date.getMinutes()) { ////15 min
 
-              if ((that.ride_startTime + 1500) >= ((date.getHours()) * 100) + date.getMinutes()) {
+              if ((that.ride_startTime + 15) >= ((date.getHours()) * 100) + date.getMinutes()) {
                 //console.log("ride time", (parseFloat(that.ride_startTime) - 1500));
 
 
@@ -769,8 +769,6 @@ export class LocationTrackingPage implements OnInit {
   update_driver_cordinated_to_firebase() {
 
     let date = new Date();
-
-
     let record = {};
     record['lat'] = this.driver_current_lat;
     record['long'] = this.driver_current_lng;
@@ -780,6 +778,8 @@ export class LocationTrackingPage implements OnInit {
     let car_id = this.car_type + "-" + this.car_id; ///////car id required
     this.afs.collection('locations').doc(car_id).update(record);
   }
+
+  
   stopTracking() {
     //console.log("distance dirve",parseFloat(this.driver_distance_from_ending_point));
     console.log('gghhh');
@@ -798,7 +798,7 @@ export class LocationTrackingPage implements OnInit {
       //console.log('stoppage_distanceInMeters', distanceInMeters/100);
 
 
-      if (distanceInMeters <= 200000000) {
+      if (distanceInMeters <= 200) {
              
               this.endJourney();
         }
