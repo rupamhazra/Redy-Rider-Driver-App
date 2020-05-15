@@ -1,0 +1,30 @@
+<app-header></app-header>
+
+<ion-content>
+  <!-- <ion-button expand="block" (click)="presentActionSheet()" >Change Ride Status Category</ion-button> -->
+
+
+  <ion-progress-bar type="indeterminate" class="progress_bar" *ngIf="progress_bar"></ion-progress-bar>
+  <div class="inner_div margin-top" *ngIf="available_today_rides">
+
+
+    <ion-card *ngFor="let item of result">
+      <ion-card-header>
+        <ion-card-subtitle>Start at : {{item.start_time}}</ion-card-subtitle>
+         <!-- <ion-card-title>Card Title</ion-card-title>  -->
+      </ion-card-header>
+    
+      <ion-card-content>
+        {{item.start_location}} - {{item.end_location}}
+      </ion-card-content>
+    </ion-card>
+
+
+
+    
+  </div>
+
+
+
+
+</ion-content>

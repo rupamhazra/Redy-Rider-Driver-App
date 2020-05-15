@@ -7,7 +7,8 @@ const routes: Routes = [
     loadChildren: './location-tracking/location-tracking.module#LocationTrackingPageModule'
   },
   { path: 'today-rides', loadChildren: './today-rides/today-rides.module#TodayRidesPageModule' },
-  { path: 'myaccount-common-page/:which-page', loadChildren: './myaccount-common-page/myaccount-common-page.module#MyaccountCommonPagePageModule' },
+  { path: 'myaccount-common-page/:which-page', loadChildren: './myaccount-common-page/myaccount-common-page.module#MyaccountCommonPagePageModule' },  { path: 'my-rides', loadChildren: './my-rides/my-rides.module#MyRidesPageModule' },
+
 ];
 
 @NgModule({

@@ -28,6 +28,7 @@ export class HomePage implements OnInit {
   medie_url: any = environment.imageURL
   visibleKey: boolean = false;
   result: [];
+  available_today_rides=false;
   userId: any;
   userType: string;
   request_data: any;
@@ -114,6 +115,13 @@ export class HomePage implements OnInit {
       res => {
         console.log(res);
         this.car_details_d = res.result;
+        if(res.status=="success"){
+          //console.log('available_today_rides','success');
+          this.available_today_rides=true;
+
+        }
+        
+        //this.car_details_d =[];
         //this.storage.set('car_details', res.result);
         this.progress_bar = false;
       },
