@@ -176,6 +176,8 @@ export class LocationTrackingPage implements OnInit {
         this.stoppage_list = element.result.stoppage_list;
         this.stoppage_list.forEach(stops => {
           this.next_stoppage_list_array.push(stops);
+
+          console.log('arival time',stops.arrival_time.split(':') );
         });
 
         this.next_stoppage_info = this.next_stoppage_list_array[0];
@@ -189,15 +191,16 @@ export class LocationTrackingPage implements OnInit {
 
         this.location_source = { lat: parseFloat(element.result.start_lat), lng: parseFloat(element.result.start_long) };
         this.location_destination = { lat: parseFloat(element.result.end_lat), lng: parseFloat(element.result.end_long) };
-        element.result.stoppage_list_1.forEach(element => {
+        element.result.stoppage_list_1.forEach(element1 => {
           let waypoint_location;
           waypoint_location = {
-            location: { lat: parseFloat(element.location.lat), lng: parseFloat(element.location.lng) },
-            stopover: element.stopover
+            location: { lat: parseFloat(element1.location.lat), lng: parseFloat(element1.location.lng) },
+            stopover: element1.stopover
           };
-
+          
           this.DirectionsWaypoint.push(waypoint_location);
         });
+        
         this.ride_startTime = parseFloat(element.result.start_end_time.start_time);
         this.ride_endTime = parseFloat(element.result.start_end_time.end_time);
         this.loadMap();
@@ -724,6 +727,10 @@ export class LocationTrackingPage implements OnInit {
       }
 
 
+      let stoppage_arrival_time=that.stoppage_log_array[0].arrival_time.split(':');
+
+
+
       that.next_stoppage_list_array.shift();
       that.next_stoppage_info = that.next_stoppage_list_array[0];
       that.myStepper.next();
@@ -1005,6 +1012,68 @@ export class LocationTrackingPage implements OnInit {
     if(stoppage_admin_request_exist_firebase==true){
       this.endJourney();
     }
+  }
+
+  async car_break_down_request(){
+    const alert = await this.alertController.create({
+      //header: 'Confirm!',
+      message: 'Are you sure you want to send a Car break Down request?',
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel',
+          cssClass: 'alert-cancel-button',
+          handler: (blah) => {
+            this.car_break_down(false);
+
+          }
+        }, {
+          text: 'Yes',
+          cssClass: 'alert-ok-button',
+          handler: () => {
+            this.car_break_down(true);
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  car_break_down(response){
+    let date = new Date();
+    let current_year = date.getFullYear().toString();
+    let current_month = (date.getMonth() + 1).toString();
+    let today_date = (date.getDate()).toString();
+
+    let record={};
+    record['time'] = ((date.getHours()) * 100) + date.getMinutes();
+    record['date'] = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+
+    if(response){
+
+
+      let request_data = { "type": "break_down", "car_id": this.car_id,"driver_id": this.driver_id };
+      this.officePoolCarService.todayRidesService(request_data).subscribe(
+        res => {
+          this.toasterService.showToast(res.result, 2000);
+          this.progress_bar = false;
+          this.authenticationService.logout();
+          navigator['app'].exitApp();
+        },
+        error => {
+          //console.log("error::::" + error.error);
+          this.progress_bar = false;
+          this.toasterService.showToast(error.error.msg, 2000);
+        }
+      );
+
+
+
+
+      //this.afs.collection('car_break_down_request').doc(this.car_id).set(record);
+      
+    }
+
   }
 
 }
