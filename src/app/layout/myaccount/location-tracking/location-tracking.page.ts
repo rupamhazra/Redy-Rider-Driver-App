@@ -475,7 +475,7 @@ export class LocationTrackingPage implements OnInit {
           let driver_distance_from_next_stoppage = response.rows[0].elements[0].distance.text.split(" ");
           var distance_checker;
           if (driver_distance_from_next_stoppage[1] == 'km') {
-            distance_checker = 20000;
+            distance_checker = 0.2;
           } else {
             distance_checker = 200;
           }
@@ -487,9 +487,9 @@ export class LocationTrackingPage implements OnInit {
             // (date.getHours())*100)+date.getMinutes() //// Current time in a army time format
             //that.ride_startTime-15 // 15 min erly of ride time
 
-            if ((that.ride_startTime - 1500) <= ((date.getHours()) * 100) + date.getMinutes()) { ////15 min
+            if ((that.ride_startTime - 15) <= ((date.getHours()) * 100) + date.getMinutes()) { ////15 min
 
-              if ((that.ride_startTime + 1500) >= ((date.getHours()) * 100) + date.getMinutes()) {
+              if ((that.ride_startTime + 15) >= ((date.getHours()) * 100) + date.getMinutes()) {
                 //console.log("ride time", (parseFloat(that.ride_startTime) - 1500));
 
 
