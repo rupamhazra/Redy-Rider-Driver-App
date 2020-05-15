@@ -475,7 +475,7 @@ export class LocationTrackingPage implements OnInit {
           let driver_distance_from_next_stoppage = response.rows[0].elements[0].distance.text.split(" ");
           var distance_checker;
           if (driver_distance_from_next_stoppage[1] == 'km') {
-            distance_checker = 0.2;
+            distance_checker = 20000;
           } else {
             distance_checker = 200;
           }
@@ -487,9 +487,9 @@ export class LocationTrackingPage implements OnInit {
             // (date.getHours())*100)+date.getMinutes() //// Current time in a army time format
             //that.ride_startTime-15 // 15 min erly of ride time
 
-            if ((that.ride_startTime - 15) <= ((date.getHours()) * 100) + date.getMinutes()) { ////15 min
+            if ((that.ride_startTime - 1500) <= ((date.getHours()) * 100) + date.getMinutes()) { ////15 min
 
-              if ((that.ride_startTime + 15) >= ((date.getHours()) * 100) + date.getMinutes()) {
+              if ((that.ride_startTime + 1500) >= ((date.getHours()) * 100) + date.getMinutes()) {
                 //console.log("ride time", (parseFloat(that.ride_startTime) - 1500));
 
 
@@ -519,6 +519,7 @@ export class LocationTrackingPage implements OnInit {
 
 
                 that.tracking_location();
+                that.sendNotificationToPassengers();
 
               } else {
                 alert("Please Start the ride within time!");
@@ -612,11 +613,11 @@ export class LocationTrackingPage implements OnInit {
           this.last_driver_postion = new_driver_location;
         }
       });
-    this.sendNotificationToPassengers();
+    
   }
 
   get_next_stoppage_info() {
-
+    console.log('get next Stopp');
     const that = this;
     var reached_stoppage;
 
@@ -726,8 +727,8 @@ export class LocationTrackingPage implements OnInit {
         that.afs.collection('stoppage_log').doc(fire_base_route_id).set(record); //////car id
       }
 
-
-      let stoppage_arrival_time=that.stoppage_log_array[0].arrival_time.split(':');
+      //console.log('arrival time changed syoopage',that.previous_stoppage_list_array[0]);
+      //let stoppage_arrival_time=that.stoppage_log_array[0].arrival_time.split(':');
 
 
 
@@ -774,7 +775,7 @@ export class LocationTrackingPage implements OnInit {
 
 
   update_driver_cordinated_to_firebase() {
-
+    console.log('update firebase driver location');
     let date = new Date();
     let record = {};
     record['lat'] = this.driver_current_lat;
@@ -819,6 +820,7 @@ export class LocationTrackingPage implements OnInit {
 
   }
   sendNotificationToPassengers() {
+    console.log('send notification');
     this.progress_bar = true;
     let request_data = {
       "type": "drive_start",
@@ -868,24 +870,24 @@ export class LocationTrackingPage implements OnInit {
 
     console.log('End journey');
     this.progress_bar = true;
-    this.storage.get('drive_history_id').then((val) => {
-      if (val) {
-        console.log('driver history id', val);
-        let request_data = { "type": "drive_end", "drive_history_id": val }
-        this.officePoolCarService.todayRidesService(request_data).subscribe(
-          res => {
-            this.progress_bar = false;
-            this.authenticationService.logout();
-            navigator['app'].exitApp();
-          },
-          error => {
-            //console.log("error::::" + error.error.msg);
-            this.progress_bar = false;
-            //this.toasterService.showToast(error.error.msg, 2000)
-          }
-        );
-      }
-    });
+    // this.storage.get('drive_history_id').then((val) => {
+    //   if (val) {
+    //     console.log('driver history id', val);
+    //     let request_data = { "type": "drive_end", "drive_history_id": val }
+    //     this.officePoolCarService.todayRidesService(request_data).subscribe(
+    //       res => {
+    //         this.progress_bar = false;
+    //         this.authenticationService.logout();
+    //         navigator['app'].exitApp();
+    //       },
+    //       error => {
+    //         //console.log("error::::" + error.error.msg);
+    //         this.progress_bar = false;
+    //         //this.toasterService.showToast(error.error.msg, 2000)
+    //       }
+    //     );
+    //   }
+    // });
 
   }
   scanQrCode() {
