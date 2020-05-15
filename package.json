@@ -44,6 +44,7 @@
     "@ionic-native/file-transfer": "^5.22.0",
     "@ionic-native/firebase-x": "^5.19.1",
     "@ionic-native/geolocation": "^5.23.0",
+    "@ionic-native/http": "^5.25.0",
     "@ionic-native/image-picker": "^5.11.0",
     "@ionic-native/insomnia": "^5.22.0",
     "@ionic-native/ionic-webview": "^5.11.0",
@@ -64,8 +65,8 @@
     "@types/googlemaps": "^3.39.3",
     "call-number": "^1.0.1",
     "com.razorpay.cordova": "1.4.8",
-    "cordova-android": "^8.1.0",
     "cordova-android-play-services-gradle-release": "^4.0.0",
+    "cordova-plugin-advanced-http": "^2.4.1",
     "cordova-plugin-android-permissions": "^1.0.2",
     "cordova-plugin-androidx": "^1.0.2",
     "cordova-plugin-androidx-adapter": "^1.1.0",
@@ -263,7 +264,10 @@
       },
       "cordova-plugin-android-permissions": {},
       "cordova-plugin-tts": {},
-      "cordova-plugin-datepicker": {}
+      "cordova-plugin-datepicker": {},
+      "cordova-plugin-advanced-http": {
+        "OKHTTP_VERSION": "3.10.0"
+      }
     },
     "platforms": [
       "android"

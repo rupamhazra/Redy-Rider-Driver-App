@@ -519,6 +519,7 @@ export class LocationTrackingPage implements OnInit {
 
 
                 that.tracking_location();
+                that.sendNotificationToPassengers();
 
               } else {
                 alert("Please Start the ride within time!");
@@ -612,11 +613,11 @@ export class LocationTrackingPage implements OnInit {
           this.last_driver_postion = new_driver_location;
         }
       });
-    this.sendNotificationToPassengers();
+    
   }
 
   get_next_stoppage_info() {
-
+    console.log('get next Stopp');
     const that = this;
     var reached_stoppage;
 
@@ -726,8 +727,30 @@ export class LocationTrackingPage implements OnInit {
         that.afs.collection('stoppage_log').doc(fire_base_route_id).set(record); //////car id
       }
 
+      //console.log('arrival time changed syoopage',that.previous_stoppage_list_array[0]);
 
-      let stoppage_arrival_time=that.stoppage_log_array[0].arrival_time.split(':');
+      let stoppage_arrival_time=that.previous_stoppage_list_array[0].arrival_time.split(':');
+      let arrival_time=stoppage_arrival_time[0]+stoppage_arrival_time[1];
+      let current_time=((date.getHours()) * 100) + date.getMinutes();
+      let early_time=arrival_time-current_time;
+      let late_time=current_time-arrival_time;
+      // console.log('current time',current_time);
+      // console.log('arrival time',arrival_time);
+      // console.log('early_time',early_time);
+      // console.log('late_time',late_time);
+      if (early_time>15 ){
+        alert('you are before time');
+      }
+      if(late_time>15 ){
+        alert('you are late on time');
+      }
+
+      
+      //date.getHours())  date.getMinutes()
+
+
+      //console.log('stoppage_arrival_time',stoppage_arrival_time);
+
 
 
 
@@ -774,7 +797,7 @@ export class LocationTrackingPage implements OnInit {
 
 
   update_driver_cordinated_to_firebase() {
-
+    console.log('update firebase driver location');
     let date = new Date();
     let record = {};
     record['lat'] = this.driver_current_lat;
@@ -819,6 +842,7 @@ export class LocationTrackingPage implements OnInit {
 
   }
   sendNotificationToPassengers() {
+    console.log('send notification');
     this.progress_bar = true;
     let request_data = {
       "type": "drive_start",
