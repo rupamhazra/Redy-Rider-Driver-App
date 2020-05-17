@@ -22,6 +22,34 @@
     </ion-buttons>
   </ion-toolbar>
   <div class="{{network_check_class}}" *ngIf="network_check_class_show" [style.background]="network_check_class=='disconnect'?'red':'#4CAF50'">{{network_msg}}</div>
+
+  <!-- Default Refresher -->
+  <ion-content>
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+  </ion-content>
+
+  <!-- Custom Refresher Properties -->
+  <ion-content>
+    <ion-refresher slot="fixed" pullFactor="0.5" pullMin="100" pullMax="200">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+  </ion-content>
+
+  <!-- Custom Refresher Content -->
+  <ion-content>
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+      <ion-refresher-content
+        pullingIcon="chevron-down-circle-outline"
+        pullingText="Pull to refresh"
+        refreshingSpinner="circles"
+        refreshingText="Refreshing...">
+      </ion-refresher-content>
+    </ion-refresher>
+  </ion-content>
+
+
 </ion-header>
 
 

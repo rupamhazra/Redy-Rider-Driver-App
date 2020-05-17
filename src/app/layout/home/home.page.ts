@@ -74,8 +74,14 @@ export class HomePage implements OnInit {
   ngOnInit() {
     this.menuCtrl.enable(true);
     this.home_page_event.subscribe('check_net_connection', (data) => {
-      if (data == 'connect') this.net_connection_check = false;
-      if (data == 'disconnect') this.net_connection_check = true;
+      if (data == 'connect'){
+        this.net_connection_check = false;
+        console.log('Connected');
+      } 
+      if (data == 'disconnect'){
+        this.net_connection_check = true;
+        console.log('Disconnected');
+      } 
     });
     this.title = this.router.url;
     if (this.platform.is("cordova"))
