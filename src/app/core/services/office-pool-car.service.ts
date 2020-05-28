@@ -49,6 +49,9 @@ export class OfficePoolCarService {
     if (!this.networkService.checkNetworkDisconnect())
       return this.http.post(environment.apiEndpoint + 'usr.php/', data);
   }
-
+  commonPageContentService(data: any): Observable<any> {
+    if (!this.networkService.checkNetworkDisconnect())
+      return this.http.post(environment.apiEndpoint + 'usr.php/', data);
+  }
 
 }
