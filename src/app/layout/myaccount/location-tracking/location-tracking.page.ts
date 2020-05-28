@@ -1176,13 +1176,13 @@ export class LocationTrackingPage implements OnInit {
       let request_data = { "type": "qr_code_val", "car_id": this.car_id, 'qr_code': barcodeData.text };
       this.officePoolCarService.todayRidesService(request_data).subscribe(
         res => {
-          this.toasterService.showToast(res.result, 2000);
+          this.toasterService.showToast(res.msg, 2000, true, false, '', '', 'my-toast');
           this.progress_bar = false;
         },
         error => {
           //console.log("error::::" + error.error);
           this.progress_bar = false;
-          this.toasterService.showToast(error.error.msg, 2000);
+          this.toasterService.showToast(error.error.msg, 2000, true, false, '', '', 'my-error-toast');
         }
       );
 
