@@ -28,7 +28,7 @@ export class HomePage implements OnInit {
   medie_url: any = environment.imageURL
   visibleKey: boolean = false;
   result: [];
-  available_today_rides=false;
+  available_today_rides = false;
   userId: any;
   userType: string;
   request_data: any;
@@ -74,14 +74,14 @@ export class HomePage implements OnInit {
   ngOnInit() {
     this.menuCtrl.enable(true);
     this.home_page_event.subscribe('check_net_connection', (data) => {
-      if (data == 'connect'){
+      if (data == 'connect') {
         this.net_connection_check = false;
         console.log('Connected');
-      } 
-      if (data == 'disconnect'){
+      }
+      if (data == 'disconnect') {
         this.net_connection_check = true;
         console.log('Disconnected');
-      } 
+      }
     });
     this.title = this.router.url;
     if (this.platform.is("cordova"))
@@ -121,12 +121,12 @@ export class HomePage implements OnInit {
       res => {
         console.log(res);
         this.car_details_d = res.result;
-        if(res.status=="success"){
+        if (res.status == "success") {
           //console.log('available_today_rides','success');
-          this.available_today_rides=true;
+          this.available_today_rides = true;
 
         }
-        
+
         //this.car_details_d =[];
         //this.storage.set('car_details', res.result);
         this.progress_bar = false;
