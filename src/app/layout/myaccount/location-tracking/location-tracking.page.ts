@@ -39,7 +39,7 @@ import { Events } from '@ionic/angular';
 })
 export class LocationTrackingPage implements OnInit {
   @ViewChild('map') mapElement: ElementRef;
-  @ViewChild('stepper') private myStepper: MatStepper;
+  @ViewChild('stepper') myStepper: MatStepper;
   progress_bar: boolean = false;
   driver_current_lat;
   driver_current_lng;
@@ -677,7 +677,12 @@ export class LocationTrackingPage implements OnInit {
           for (let j = 0; j <= i; j++) {
             console.log("Block statement execution no." + j);
             console.log("stoppage list", this.stoppage_list[j]);
-            this.myStepper.selectedIndex = j + 1;
+            console.log("stoppage array index",j+1);
+            console.log("this.myStepper",this.myStepper);
+            if(this.myStepper!=undefined){
+              this.myStepper.selectedIndex = j + 1;
+            }
+            
             reached_stoppage.push(this.stoppage_list[j]);
           }
 
