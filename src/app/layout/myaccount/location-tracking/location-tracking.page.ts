@@ -677,6 +677,7 @@ export class LocationTrackingPage implements OnInit {
           for (let j = 0; j <= i; j++) {
             console.log("Block statement execution no." + j);
             console.log("stoppage list", this.stoppage_list[j]);
+            this.myStepper.selectedIndex = j + 1;
             reached_stoppage.push(this.stoppage_list[j]);
           }
 
@@ -690,11 +691,14 @@ export class LocationTrackingPage implements OnInit {
 
       console.log('new_stoppage', new_stoppage);
       new_stoppage.forEach((new_stoppage_stop, p) => {
-        console.log('p', p);
-        console.log('new_stoppage_stop', new_stoppage_stop);
+        //console.log('p',p);
+        //console.log('new_stoppage_stop',new_stoppage_stop);
+
+        this.stoppage_reached(new_stoppage_stop.stoppage_id);
+
         this.previous_stoppage_list_array.push(new_stoppage_stop);
 
-        console.log('this.next_stoppage_info', this.next_stoppage_info);
+        //console.log('this.next_stoppage_info',this.next_stoppage_info);
         if (this.next_stoppage_list_array[0].stop == true) {
           console.log('next_stoppage_list_array Stopped', this.next_stoppage_list_array);
 
@@ -750,10 +754,14 @@ export class LocationTrackingPage implements OnInit {
         this.next_stoppage_list_array.shift();
         console.log('next_stoppage_list_array', this.next_stoppage_list_array);
         this.next_stoppage_info = this.next_stoppage_list_array[0];
-        this.myStepper.next();
+        //this.myStepper.next();
+
         this.tts.speak(this.next_stoppage_info.location_name)
           .then(() => console.log('Success'))
           .catch((reason: any) => console.log(reason));
+
+
+
 
 
       });
@@ -863,6 +871,33 @@ export class LocationTrackingPage implements OnInit {
 
 
   }
+
+  stoppage_reached(stoppage_id) {
+    let request_data = {
+      "type": "reached_stoppage",
+      "route_id": this.route_id,
+      "route_time_id": this.route_timing_id,
+      "stoppage_id": stoppage_id,
+      "car_id": this.car_id
+
+    };
+    //console.log('request_data', request_data)
+    this.officePoolCarService.todayRidesService(request_data).subscribe(
+      res => {
+        this.resume_data = res.result;
+        console.log("res_resume_data:::", res.result);
+
+
+
+      },
+      error => {
+        console.log("error::::" + error.error.msg);
+
+        //this.toasterService.showToast(error.error.msg, 2000)
+      }
+    );
+  }
+
 
   resume_tracking() {
     this.is_resuming_tracking = true;
