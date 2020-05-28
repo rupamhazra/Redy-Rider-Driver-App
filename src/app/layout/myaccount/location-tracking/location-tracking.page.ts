@@ -11,7 +11,7 @@ import { AngularFirestoreCollection, AngularFirestore } from '@angular/fire/fire
 import { BackgroundGeolocation, BackgroundGeolocationConfig, BackgroundGeolocationEvents, BackgroundGeolocationResponse } from '@ionic-native/background-geolocation/ngx';
 import { OfficePoolCarService } from '../../../core/services/office-pool-car.service';
 import { Insomnia } from '@ionic-native/insomnia/ngx';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { BarcodeScanner, BarcodeScannerOptions } from '@ionic-native/barcode-scanner/ngx';
 import { ToasterService } from '../../../core/services/toaster.service';
 import { AlertController } from '@ionic/angular';
 import { AuthenticationService } from '../../../core/services/authentication.service';
@@ -1166,14 +1166,18 @@ export class LocationTrackingPage implements OnInit {
 
   }
   scanQrCode() {
-    let options = {
-      'preferFrontCamera': true,
-      'showTorchButton': true
-    }
+
+    const options: BarcodeScannerOptions = {
+      preferFrontCamera: true,
+      showFlipCameraButton: true,
+      showTorchButton: true,
+      prompt: 'Place a Qr code inside the scan area',
+      resultDisplayDuration: 500,
+    };
     this.barcodeScanner.scan(options).then(barcodeData => {
       //console.log('Barcode data', barcodeData);
       this.progress_bar = true;
-      let request_data = { "type": "qr_code_val", "car_id": this.car_id, 'qr_code': barcodeData.text };
+      let request_data = { "type": "qr_code_val", "car_id": this.car_id, 'qr_code': 'cc' };
       this.officePoolCarService.todayRidesService(request_data).subscribe(
         res => {
           this.toasterService.showToast(res.msg, 2000, true, false, '', '', 'my-toast');
@@ -1185,6 +1189,7 @@ export class LocationTrackingPage implements OnInit {
           this.toasterService.showToast(error.error.msg, 2000, true, false, '', '', 'my-error-toast');
         }
       );
+
 
     }).catch(err => {
       console.log('Error', err);
