@@ -22,10 +22,10 @@
 /************* Staging ********************/
 export const environment = {
   production: false,
-  apiEndpoint: 'http://tobuekalabya.com/carservice_manage/api/',
-  imageURL: 'http://tobuekalabya.com/carservice_manage/uploads/',
-  // apiEndpoint:'https://redyrider.com/api/usr.php/',
-  // imageURL: 'https://redyrider.com/uploads/',
+  // apiEndpoint: 'http://tobuekalabya.com/carservice_manage/api/',
+  // imageURL: 'http://tobuekalabya.com/carservice_manage/uploads/',
+  apiEndpoint:'https://redyrider.com/api/',
+  imageURL: 'https://redyrider.com/uploads/',
   fcmEndpoint: 'https://fcm.googleapis.com/fcm/',
   firebase: {
     // apiKey: "AIzaSyBNW49l9wDIkWl4gMXAst2vgo8KegoYOyA",

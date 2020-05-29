@@ -508,7 +508,7 @@ export class LocationTrackingPage implements OnInit {
             // (date.getHours())*100)+date.getMinutes() //// Current time in a army time format
             //that.ride_startTime-15 // 15 min erly of ride time
 
-            if ((that.ride_startTime - 15) <= ((date.getHours()) * 100) + date.getMinutes()) { ////15 min
+            if ((that.ride_startTime) <= ((date.getHours()) * 100) + date.getMinutes()) { ////15 min
 
               if ((that.ride_startTime + 15) >= ((date.getHours()) * 100) + date.getMinutes()) {
                 //console.log("ride time", (parseFloat(that.ride_startTime) - 1500));
@@ -680,7 +680,7 @@ export class LocationTrackingPage implements OnInit {
             console.log("stoppage array index",j+1);
             console.log("this.myStepper",this.myStepper);
             if(this.myStepper!=undefined){
-              this.myStepper.selectedIndex = j + 1;
+              this.myStepper.selectedIndex = j;
             }
             
             reached_stoppage.push(this.stoppage_list[j]);
