@@ -59,10 +59,11 @@ export class LoginPage implements OnInit {
         let data = { "from_which_page": "login-otp-page", "user_details": res.result }
         this.modalService.openModal(RouteStoppageModalPage, data, '_c_modal_otp_css');
         this.loadingService.dismiss();
+        this.toasterService.showToast(res.msg, 3000, true, false, '', '', 'my-toast');
       },
       error => {
         this.loadingService.dismiss();
-        this.toasterService.showToast(error.error.msg, 2000)
+        this.toasterService.showToast(error.error.msg, 2000, true, false, '', '', 'my-error-toast');
       }
     );
   }

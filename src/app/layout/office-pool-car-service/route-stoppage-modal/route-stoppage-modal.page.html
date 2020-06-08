@@ -260,16 +260,16 @@
       </ion-text>
         <ion-item class="ion-text-center ion-margin-bottom" lines="none">
           <div class="otp-input2">
-            <ion-input #Field1 type="tel" [(ngModel)]="otp1" maxlength="1" class="otp-margin-right" readonly></ion-input>
-            <ion-input #Field2 type="tel" [(ngModel)]="otp2" maxlength="1" class="otp-margin-right" readonly></ion-input>
-            <ion-input #Field3 [(ngModel)]="otp3" maxlength="1" class="otp-margin-right" readonly></ion-input>
-            <ion-input #Field4 [(ngModel)]="otp4" maxlength="1" readonly></ion-input>
+            <ion-input #Field1 type="tel" [(ngModel)]="otp1" maxlength="1" class="otp-margin-right" (keyup)="moveFocus(Field2,$event,Field1)"></ion-input>
+            <ion-input #Field2 type="tel" [(ngModel)]="otp2" maxlength="1" class="otp-margin-right" (keyup)="moveFocus(Field3,$event,Field1)"></ion-input>
+            <ion-input #Field3 [(ngModel)]="otp3" maxlength="1" class="otp-margin-right" (keyup)="moveFocus(Field4,$event,Field2)"></ion-input>
+            <ion-input #Field4 [(ngModel)]="otp4" maxlength="1" (keyup)="moveFocus(Field4,$event,Field3)"></ion-input>
           </div>
           <ion-icon name="chatbubbles" slot="start" style=" margin-right: 0px;"></ion-icon>
         </ion-item>
         <div>
           <ion-button size="default"  type="button" color="danger" (click)="closeModal()">Cancel</ion-button>
-          <ion-button size="default" color="button"  type="button" (click)="otpVerify()">Continue</ion-button>
+          <ion-button size="default" color="button"  type="button" (click)="otpVerify()" [disabled]="!(otp1 && otp2 && otp3 && otp4) || net_connection_check">Continue</ion-button>
         </div>
     </div>
     <div class="ion-text-center ion-padding" *ngIf="calling_page=='location-tracking-for-each-passenger-details-page'">

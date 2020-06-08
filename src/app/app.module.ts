@@ -32,7 +32,6 @@ import { far } from '@fortawesome/free-regular-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 library.add(fas, far, fab);
 import { CallNumber } from '@ionic-native/call-number/ngx';
-import { SMS } from '@ionic-native/sms/ngx';
 import { EmailComposer } from '@ionic-native/email-composer/ngx';
 import { environment } from '../environments/environment';
 import { BackgroundGeolocation } from '@ionic-native/background-geolocation/ngx';
@@ -85,7 +84,6 @@ import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
     LocalNotifications,
     SocialSharing,
     CallNumber,
-    SMS,
     EmailComposer,
     BarcodeScanner,
     FileTransfer,

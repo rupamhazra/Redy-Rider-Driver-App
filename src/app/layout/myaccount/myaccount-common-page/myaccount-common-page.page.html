@@ -5,7 +5,7 @@
   <div *ngIf="which_page == 'notifications'" style="background: white;">
     <div class="inner_div">
       <p *ngIf="blank_div" style="text-align: center;">
-          No Notification Found
+        <ion-text color="danger">No Notification Found</ion-text>
       </p>
       <ion-grid no-marign no-padding *ngIf="!blank_div">
           <ion-row *ngFor="let item of dataList">

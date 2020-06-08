@@ -119,6 +119,6 @@
     </mat-accordion>
   </div>
 
-  <div class="inner_div margin-top" *ngIf="!available_today_rides">No Rides Assigned</div>
+  <div class="inner_div margin-top" *ngIf="result.length == 0" padding margin text-center><ion-text color="danger">No Rides Assigned</ion-text></div>
     
 </ion-content>
