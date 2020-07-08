@@ -2,7 +2,8 @@ export const environment = {
   production: true,
   // apiEndpoint: 'http://tobuekalabya.com/carservice_manage/api/',
   // imageURL: 'http://tobuekalabya.com/carservice_manage/uploads/',
-  apiEndpoint:'https://redyrider.com/api/',
+  //apiEndpoint:'https://redyrider.com/api/',
+  apiEndpoint:'http://52.66.138.162/api/',
   imageURL: 'https://redyrider.com/carservice_manage/uploads/',
   fcmEndpoint: 'https://fcm.googleapis.com/fcm/',
   firebase: {

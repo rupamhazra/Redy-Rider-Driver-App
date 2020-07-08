@@ -40,7 +40,7 @@
     <ion-card>
       <ion-card-header>
         <ion-card-subtitle>Next Stop</ion-card-subtitle>
-        <ion-card-title *ngIf="next_stoppage_info" >{{next_stoppage_info.location_name}}</ion-card-title>
+        <ion-card-title *ngIf="next_stoppage_info" >{{next_stoppage_info.location_name}} | Time: {{next_stoppage_info.arrival_time}}</ion-card-title>
       </ion-card-header>
     
       <ion-card-content>
@@ -60,7 +60,7 @@
     </ion-card>
     <mat-vertical-stepper [linear]="false"  #stepper (selectionChange)="onStepChange($event)">
       <mat-step [stepControl]="stoppage" *ngFor="let stoppage of stoppage_list; let i = index; let lst = last;" >
-        <ng-template matStepLabel>{{stoppage.location_name}}</ng-template>
+        <ng-template matStepLabel>{{stoppage.location_name}} | Time: {{stoppage.arrival_time}}</ng-template>
         <ion-list no-padding>
           <h6 style="font-size: 14px;">Passenger List ({{stoppage.passenger_listed.length}})</h6>
           <mat-divider></mat-divider>

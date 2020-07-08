@@ -140,7 +140,7 @@ export class LocationTrackingPage implements OnInit {
       if (val) {
         //console.log(val);
         //this.refer_code = val.user_account_no+'-'+val.name;
-        this.anonLogin(val.user_account_no + '-' + val.name + '-' + new Date());
+        //this.anonLogin(val.user_account_no + '-' + val.name + '-' + new Date());
       }
     });
     this.storage.get('isTracking').then((val) => {
@@ -152,18 +152,20 @@ export class LocationTrackingPage implements OnInit {
 
 
   }
-  public onStepChange(event: any): void {
-    //console.log(event.selectedIndex);
-    const stepId = this.myStepper._getStepLabelId(parseInt(event.selectedIndex) - 1);
-    //console.log('stepId', stepId);
-    const stepElement = document.getElementById(stepId);
-    if (stepElement) {
-      setTimeout(() => {
-        stepElement.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
-      }, 250);
-    }
-  }
 
+  ///////////////////////////////////// Scroller is turned off//////////////////////////////////////////////////////
+  public onStepChange(event: any): void {
+    // //console.log(event.selectedIndex);
+    // const stepId = this.myStepper._getStepLabelId(parseInt(event.selectedIndex) - 1);
+    // //console.log('stepId', stepId);
+    // const stepElement = document.getElementById(stepId);
+    // if (stepElement) {
+    //   setTimeout(() => {
+    //     stepElement.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+    //   }, 250);
+    // }
+  }
+  ///////////////////////////////////// Scroller is turned off//////////////////////////////////////////////////////
 
   getRideCarDetails() {
     this.progress_bar = true;
@@ -246,7 +248,7 @@ export class LocationTrackingPage implements OnInit {
           this.driver_current_lng = location.longitude;
           this.update_driver_cordinated_to_firebase();
           this.get_next_stoppage_info();
-          this.check_firebase_for_admin_stop_resquest();
+          //this.check_firebase_for_admin_stop_resquest();
           this.backgroundGeolocation.finish(); // FOR IOS ONLY
         });
     });
@@ -583,12 +585,19 @@ export class LocationTrackingPage implements OnInit {
                 record['date'] = date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
 
                 let car_id = that.car_type + "-" + that.car_id;
-                that.afs.collection('locations').doc(car_id).set(record); //////car id
+                that.afs.collection('locations').doc(car_id).set(record).then(function() {
+                  //console.log("Frank created");
+                  that.tracking_location();
+
+                  that.sendNotificationToPassengers();
+
+                }).catch((error) => {
+                  alert('Database Connection Error');
+                  console.log('Error getting location', error);
+                }); //////car id
 
 
-                that.tracking_location();
-
-                that.sendNotificationToPassengers();
+                
 
 
               } else {
@@ -649,7 +658,7 @@ export class LocationTrackingPage implements OnInit {
           this.driver_current_lng = position.coords.longitude;
           let new_driver_location = new google.maps.LatLng(this.driver_current_lat, this.driver_current_lng);
           //console.log('new_driver_location', new_driver_location)
-          this.get_next_stoppage_info();
+          
           this.driver_marker.setPosition(new_driver_location);
 
 
@@ -673,14 +682,15 @@ export class LocationTrackingPage implements OnInit {
             //console.log('heading', heading);
             this.car_icon.rotation = heading;
             this.driver_marker.setIcon(this.car_icon);
-            //this.driver_marker.rotation = heading;
-            this.map.setHeading = parseInt(90 + heading);
+            this.driver_marker.rotation = heading;
+            //this.map.setHeading = parseInt(90 + heading);
             //this.map.tilt=45;
           }
           console.log(new_driver_location);
 
           this.map.panTo(new_driver_location);
           this.update_driver_cordinated_to_firebase();
+          this.get_next_stoppage_info();
           this.last_driver_postion = new_driver_location;
         }
       });
@@ -708,7 +718,7 @@ export class LocationTrackingPage implements OnInit {
       lng: parseFloat(this.driver_current_lng)
     };
 
-    //if (this.is_resume_complete == true) {
+    
 
       //console.log('previous_stoppage_list_array', this.previous_stoppage_list_array);
       //console.log('next_stoppage_list_array before shift', this.next_stoppage_list_array);
@@ -729,10 +739,11 @@ export class LocationTrackingPage implements OnInit {
             //console.log("stoppage list", this.stoppage_list[j]);
             //console.log("stoppage array index",j+1);
             //console.log("this.myStepper",this.myStepper);
-            if(this.myStepper!=undefined){
-              this.myStepper.selectedIndex = j;
-            }
-            
+            ///////////////////////// Stepper Next //////////////////////////////////////////////////////////////////////
+            // if(this.myStepper!=undefined){
+            //   this.myStepper.selectedIndex = j;
+            // }
+             ///////////////////////// Stepper Next //////////////////////////////////////////////////////////////////////
             reached_stoppage.push(this.stoppage_list[j]);
           }
 
@@ -767,22 +778,26 @@ export class LocationTrackingPage implements OnInit {
 
         let date = new Date();
 
-        let today_date = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
-        let stoppage_log = { stoppage_id: this.next_stoppage_list_array[0].stoppage_id, time: ((date.getHours()) * 100) + date.getMinutes(), date: today_date };
-        this.stoppage_log_array.push(stoppage_log);
-        let year_wise_montly_today_date = date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate();
-        let fire_base_route_id = year_wise_montly_today_date + '/' + this.car_id + "/" + this.driver_id + "-" + this.route_id + "-" + this.route_timing_id;
-        let record = {};
-        var stoppage_already_exist_firebase;
-        record['driver_id'] = this.driver_id;
-        record['car_id'] = this.car_id;
-        record['route_id'] = this.route_id;
-        record['route_timing_id'] = this.route_timing_id;
-        record['stoppage_log'] = this.stoppage_log_array;
+        //////////////////////////////////////////////////Stoppage Log to FireBase ////////////////////////////////////////////
 
-        //alert(fire_base_car_id);
+        // let today_date = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+        // let stoppage_log = { stoppage_id: this.next_stoppage_list_array[0].stoppage_id, time: ((date.getHours()) * 100) + date.getMinutes(), date: today_date };
+        // this.stoppage_log_array.push(stoppage_log);
+        // let year_wise_montly_today_date = date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate();
+        // let fire_base_route_id = year_wise_montly_today_date + '/' + this.car_id + "/" + this.driver_id + "-" + this.route_id + "-" + this.route_timing_id;
+        // let record = {};
+        // var stoppage_already_exist_firebase;
+        // record['driver_id'] = this.driver_id;
+        // record['car_id'] = this.car_id;
+        // record['route_id'] = this.route_id;
+        // record['route_timing_id'] = this.route_timing_id;
+        // record['stoppage_log'] = this.stoppage_log_array;
 
-        this.afs.collection('stoppage_log').doc(fire_base_route_id).set(record); //////car id
+        // //alert(fire_base_car_id);
+
+        // this.afs.collection('stoppage_log').doc(fire_base_route_id).set(record); //////car id
+
+        /////////////////////////////////////End of /////////////Stoppage Log to FireBase ////////////////////////////////////////////
 
         //console.log('arrival time changed syoopage',this.previous_stoppage_list_array[0]);
 
@@ -826,10 +841,10 @@ export class LocationTrackingPage implements OnInit {
 
 
 
-    //}
+    
 
 
-
+    ///////////////////////////////////// Next Stoppage with Distance matrix api ///////////////////////////////////////////
 
 
 
@@ -927,6 +942,7 @@ export class LocationTrackingPage implements OnInit {
     //   }
     // }
 
+    /////////////////////////////////////////// End of next Stoopage function with distance matrix api//////////////////////
 
   }
 
@@ -943,8 +959,8 @@ export class LocationTrackingPage implements OnInit {
     this.officePoolCarService.todayRidesService(request_data).subscribe(
       res => {
         this.resume_data = res.result;
-        console.log("res_resume_data:::", res.result);
-
+        console.log("res_resume_data_reached_stoppage:::", res.result);
+        this.stoppage_list = res.result.stoppage_passenger;
 
 
       },
@@ -957,97 +973,69 @@ export class LocationTrackingPage implements OnInit {
   }
 
 
-  resume_tracking() {
-    this.is_resuming_tracking = true;
-    const that = this
-    this.progress_bar = true;
-    var count;
-    let request_data = {
-      "type": "nearest_location_ongoing",
-      "route_id": this.route_id,
-      "route_time_id": this.route_timing_id,
-      "lat": this.driver_current_lat,
-      "long": this.driver_current_lng
-    };
-    //console.log('request_data', request_data)
-    this.officePoolCarService.todayRidesService(request_data).subscribe(
-      res => {
-        this.resume_data = res.result;
-        console.log("res_resume_data:::", res.result);
-        this.progress_bar = false;
-
-        let date = new Date();
-        var stoppage_id;
-
-        console.log(res.result[0].stop_id);
-
-        console.log('stoppage_id', stoppage_id);
-        //console.log(Math.max(a, b));
-        if (res.result[0].stop_id > res.result[1].stop_id) {
-          stoppage_id = res.result[0].location_id;
-        } else {
-          stoppage_id = res.result[1].location_id;
-        }
-        console.log('stoppage_id', stoppage_id);
-        let m: number = 0;
-        while (this.stoppage_list[m].stoppage_id <= stoppage_id) {
-          console.log('that.stoppage_list.stoppage_id', this.stoppage_list[m].stoppage_id);
-          this.previous_stoppage_list_array.push(this.next_stoppage_list_array[0]);
-
-          this.next_stoppage_list_array.shift();
-          this.next_stoppage_info = this.next_stoppage_list_array[0];
-          //that.myStepper.next();
-          console.log('m', m);
-          m++;
-          this.myStepper.next();
-
-        }
-
-        this.is_resuming_tracking = false;
-
-      },
-      error => {
-        console.log("error::::" + error.error.msg);
-        this.progress_bar = false;
-        //this.toasterService.showToast(error.error.msg, 2000)
-      }
-    );
-  }
-
-
-
-
-
-
-
-
-
-
-  // intial_location(){
-  //   let current_pos_marker = {
-  //     lat: parseFloat(this.driver_current_lat),
-  //     lng: parseFloat(this.driver_current_lng)
+  // resume_tracking() {
+  //   this.is_resuming_tracking = true;
+  //   const that = this
+  //   this.progress_bar = true;
+  //   var count;
+  //   let request_data = {
+  //     "type": "nearest_location_ongoing",
+  //     "route_id": this.route_id,
+  //     "route_time_id": this.route_timing_id,
+  //     "lat": this.driver_current_lat,
+  //     "long": this.driver_current_lng
   //   };
-  //   let distance_to_stop=[];
-  //   let stoppage_array=[];
-  //   this.stoppage_list.forEach( (next_stop,i)=> {
-  //     // console.log('next_stop',next_stop);
-  //      console.log('i',i);
-  //     // console.log('current_pos_marker',current_pos_marker);
-  //     // console.log('next_stop',next_stop.lat);
-  //     // console.log('next_stop',next_stop.lng);
-  //     var distanceInMeters = this.getDistanceBetweenPoints(current_pos_marker.lat, current_pos_marker.lng, next_stop.lat, next_stop.lng);
-  //     console.log('distanceInMeters closets',distanceInMeters);
-  //     distance_to_stop.push(distanceInMeters);
+  //   //console.log('request_data', request_data)
+  //   this.officePoolCarService.todayRidesService(request_data).subscribe(
+  //     res => {
+  //       this.resume_data = res.result;
+  //       console.log("res_resume_data:::", res.result);
+  //       this.progress_bar = false;
 
-  //   });
-  //   let min_distnace= this.closest_stop(distance_to_stop);
-  //   distance_to_stop.findIndex(min_distnace);
+  //       let date = new Date();
+  //       var stoppage_id;
+
+  //       console.log(res.result[0].stop_id);
+
+  //       console.log('stoppage_id', stoppage_id);
+  //       //console.log(Math.max(a, b));
+  //       if (res.result[0].stop_id > res.result[1].stop_id) {
+  //         stoppage_id = res.result[0].location_id;
+  //       } else {
+  //         stoppage_id = res.result[1].location_id;
+  //       }
+  //       console.log('stoppage_id', stoppage_id);
+  //       let m: number = 0;
+  //       while (this.stoppage_list[m].stoppage_id <= stoppage_id) {
+  //         console.log('that.stoppage_list.stoppage_id', this.stoppage_list[m].stoppage_id);
+  //         this.previous_stoppage_list_array.push(this.next_stoppage_list_array[0]);
+
+  //         this.next_stoppage_list_array.shift();
+  //         this.next_stoppage_info = this.next_stoppage_list_array[0];
+  //         //that.myStepper.next();
+  //         console.log('m', m);
+  //         m++;
+  //         this.myStepper.next();
+
+  //       }
+
+  //       this.is_resuming_tracking = false;
+
+  //     },
+  //     error => {
+  //       console.log("error::::" + error.error.msg);
+  //       this.progress_bar = false;
+  //       //this.toasterService.showToast(error.error.msg, 2000)
+  //     }
+  //   );
   // }
 
-  // closest_stop( array ){
-  //     return Math.min.apply( Math, array );
-  // };
+
+
+
+
+
+
 
 
   differenceOf2Arrays(array1, array2) {
@@ -1079,7 +1067,7 @@ export class LocationTrackingPage implements OnInit {
     return degrees * (pi / 180);
   }
   getDistanceBetweenPoints(lat1, lng1, lat2, lng2) {
-    console.log('zz');
+    //console.log('zz');
     // The radius of the planet earth in meters
     let R = 6378137;
     let dLat = this.degreesToRadians(lat2 - lat1);
@@ -1115,7 +1103,7 @@ export class LocationTrackingPage implements OnInit {
     let car_id = this.car_type + "-" + this.car_id; ///////car id required
     this.afs.collection('locations').doc(car_id).update(record);
 
-    this.check_firebase_for_admin_stop_resquest();
+    //this.check_firebase_for_admin_stop_resquest();
   }
 
 
@@ -1199,7 +1187,7 @@ export class LocationTrackingPage implements OnInit {
     let car_id = this.car_type + "-" + this.car_id;
 
     this.afs.collection('locations').doc(car_id).delete();
-    this.afs.collection('admin_stoppage_request').doc(car_id).delete();
+    //this.afs.collection('admin_stoppage_request').doc(car_id).delete();
 
 
     console.log('End journey');
@@ -1296,81 +1284,94 @@ export class LocationTrackingPage implements OnInit {
     this.modalService.openModal(RouteStoppageModalPage, data, 'passenger_modal_css');
   }
 
-  resume_stoppage() {
-    //alert();
-    let date = new Date();
-    let current_year = date.getFullYear().toString();
-    let current_month = (date.getMonth() + 1).toString();
-    let today_date = (date.getDate()).toString();
-    //let year_wise_montly_today_date=date.getFullYear() + '/' + (date.getMonth()+1) + '/' + date.getDate();
-    let fire_base_route_id = this.driver_id + "-" + this.route_id + "-" + this.route_timing_id;
-    var stoppage_already_exist_firebase;
-    //console.log(fire_base_route_id);
-    //this.afs.collection("stoppage_log").doc(current_year).collection(current_month).doc().get().toPromise().then(doc => {
-    this.afs.collection("stoppage_log").doc(current_year).collection(current_month).doc(today_date).collection(this.car_id).doc(fire_base_route_id).get().toPromise().then(doc => {
-      if (!doc.exists) {
-        console.log('No such Stoppage log!');
 
-      } else {
-        //console.log('Document data:', doc.data());
-        //console.log('firebase entry exits');
-
-        doc.data().stoppage_log.forEach(stops => {
-          if (stops.stoppage_id == this.next_stoppage_list_array[0].stoppage_id) {
-
-            //let stoppage_log = { stoppage_id: this.next_stoppage_list_array[0].stoppage_id, time: ((date.getHours()) * 100) + date.getMinutes(), date: today_date };
-
-            //this.stoppage_log_array.push(stoppage_log);
+  ///////////////////////////////////////////////Firebase Stoppage Resume and sync on staring of activity/////////////////////
 
 
-            this.previous_stoppage_list_array.push(this.next_stoppage_list_array[0]);
+  // resume_stoppage() {
+  //   //alert();
+  //   let date = new Date();
+  //   let current_year = date.getFullYear().toString();
+  //   let current_month = (date.getMonth() + 1).toString();
+  //   let today_date = (date.getDate()).toString();
+  //   //let year_wise_montly_today_date=date.getFullYear() + '/' + (date.getMonth()+1) + '/' + date.getDate();
+  //   let fire_base_route_id = this.driver_id + "-" + this.route_id + "-" + this.route_timing_id;
+  //   var stoppage_already_exist_firebase;
+  //   //console.log(fire_base_route_id);
+  //   //this.afs.collection("stoppage_log").doc(current_year).collection(current_month).doc().get().toPromise().then(doc => {
+  //   this.afs.collection("stoppage_log").doc(current_year).collection(current_month).doc(today_date).collection(this.car_id).doc(fire_base_route_id).get().toPromise().then(doc => {
+  //     if (!doc.exists) {
+  //       console.log('No such Stoppage log!');
 
-            this.next_stoppage_list_array.shift();
-            this.next_stoppage_info = this.next_stoppage_list_array[0];
-            if( this.myStepper!=undefined){
-              this.myStepper.next();
-            }
+  //     } else {
+  //       //console.log('Document data:', doc.data());
+  //       //console.log('firebase entry exits');
+
+  //       doc.data().stoppage_log.forEach(stops => {
+  //         if (stops.stoppage_id == this.next_stoppage_list_array[0].stoppage_id) {
+
+  //           //let stoppage_log = { stoppage_id: this.next_stoppage_list_array[0].stoppage_id, time: ((date.getHours()) * 100) + date.getMinutes(), date: today_date };
+
+  //           //this.stoppage_log_array.push(stoppage_log);
+
+
+  //           this.previous_stoppage_list_array.push(this.next_stoppage_list_array[0]);
+
+  //           this.next_stoppage_list_array.shift();
+  //           this.next_stoppage_info = this.next_stoppage_list_array[0];
+  //           if( this.myStepper!=undefined){
+  //             this.myStepper.next();
+  //           }
             
-          }
+  //         }
 
-        });
+  //       });
 
-      }
-    })
-      .catch(err => {
-        console.log('Error getting document', err);
-      });
+  //     }
+  //   })
+  //     .catch(err => {
+  //       console.log('Error getting document', err);
+  //     });
 
-    // this.previous_stoppage_list_array.push(this.next_stoppage_list_array[0]);
+  //   // this.previous_stoppage_list_array.push(this.next_stoppage_list_array[0]);
 
-    // this.next_stoppage_list_array.shift();
-    // this.next_stoppage_info = this.next_stoppage_list_array[0];
-    // this.myStepper.next();
+  //   // this.next_stoppage_list_array.shift();
+  //   // this.next_stoppage_info = this.next_stoppage_list_array[0];
+  //   // this.myStepper.next();
 
-    //this.is_resume_complete = true;
+  //   //this.is_resume_complete = true;
 
-  }
+  // }
 
-  check_firebase_for_admin_stop_resquest() {
-    //let stoppage_admin_request_exist_firebase;
-    let car_id = this.car_type + "-" + this.car_id;
-    this.afs.collection('admin_stoppage_request').snapshotChanges().subscribe(data => {
-      //this.driver_curent_live_location = 
-      data.map(e => {
-        if (e.payload.doc.id == car_id) {
+  ////////////////////////////////// END OF /////////////Firebase Stoppage Resume and sync on staring of activity/////////////////////
 
-          //stoppage_admin_request_exist_firebase = 1;
-          console.log("firebase data stopp request", e.payload.doc.id);
-          this.endJourney();
-        }
-      })
-    });
-    //console.log('stoppage_admin_request_exist_firebase',stoppage_admin_request_exist_firebase);
-    // if(stoppage_admin_request_exist_firebase==1){
-    //   //.endJourney();
-    //   console.log('end journey');
-    // }
-  }
+
+
+
+  //////////////////////////////////////// Firebase Admin Immediate Ride End Request////////////////////////////////
+
+  // check_firebase_for_admin_stop_resquest() {
+  //   //let stoppage_admin_request_exist_firebase;
+  //   let car_id = this.car_type + "-" + this.car_id;
+  //   this.afs.collection('admin_stoppage_request').snapshotChanges().subscribe(data => {
+  //     //this.driver_curent_live_location = 
+  //     data.map(e => {
+  //       if (e.payload.doc.id == car_id) {
+
+  //         //stoppage_admin_request_exist_firebase = 1;
+  //         console.log("firebase data stopp request", e.payload.doc.id);
+  //         this.endJourney();
+  //       }
+  //     })
+  //   });
+  //   //console.log('stoppage_admin_request_exist_firebase',stoppage_admin_request_exist_firebase);
+  //   // if(stoppage_admin_request_exist_firebase==1){
+  //   //   //.endJourney();
+  //   //   console.log('end journey');
+  //   // }
+  // }
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   async car_break_down_request() {
     const alert = await this.alertController.create({
